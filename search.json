@@ -1,0 +1,184 @@
+[
+  {
+    "objectID": "pages/overview.html",
+    "href": "pages/overview.html",
+    "title": "Overview",
+    "section": "",
+    "text": "script-widget lets you … Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sagittis posuere ligula sit amet lacinia. Duis dignissim pellentesque magna, rhoncus congue sapien finibus mollis. Ut eu sem laoreet, vehicula ipsum in, convallis erat. Vestibulum magna sem, blandit pulvinar augue sit amet, auctor malesuada sapien. Nullam faucibus leo eget eros hendrerit, non laoreet ipsum lacinia. Curabitur cursus diam elit, non tempus ante volutpat a. Quisque hendrerit blandit purus non fringilla. Integer sit amet elit viverra ante dapibus semper. Vestibulum viverra rutrum enim, at luctus enim posuere eu. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.## Installation::: {.panel-tabset}## pixibashpixi workspace channel add munch-grouppixi add script-widget## condabashconda install -c munch-group script-widget## pipbashpip install script-widget:::## Basic usepython## Some use caseThe run_exercise function runs a cell’s source in a fresh, isolated namespace and returns an ExerciseResult capturing everything it produced.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sagittis posuere ligula sit amet lacinia. Duis dignissim pellentesque magna, rhoncus congue sapien finibus mollis. Ut eu sem laoreet, vehicula ipsum in, convallis erat. Vestibulum magna sem, blandit pulvinar augue sit amet, auctor malesuada sapien. Nullam faucibus leo eget eros hendrerit, non laoreet ipsum lacinia. Curabitur cursus diam elit, non tempus ante volutpat a. Quisque hendrerit blandit purus non fringilla. Integer sit amet elit viverra ante dapibus semper. Vestibulum viverra rutrum enim, at luctus enim posuere eu. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.\n# from script_widget import run_exercise# run_exercise(\"1 + 1\")\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sagittis posuere ligula sit amet lacinia. Duis dignissim pellentesque magna, rhoncus congue sapien finibus mollis. Ut eu sem laoreet, vehicula ipsum in, convallis erat. Vestibulum magna sem, blandit pulvinar augue sit amet, auctor malesuada sapien. Nullam faucibus leo eget eros hendrerit, non laoreet ipsum lacinia. Curabitur cursus diam elit, non tempus ante volutpat a. Quisque hendrerit blandit purus non fringilla. Integer sit amet elit viverra ante dapibus semper. Vestibulum viverra rutrum enim, at luctus enim posuere eu. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sagittis posuere ligula sit amet lacinia. Duis dignissim pellentesque magna, rhoncus congue sapien finibus mollis. Ut eu sem laoreet, vehicula ipsum in, convallis erat. Vestibulum magna sem, blandit pulvinar augue sit amet, auctor malesuada sapien. Nullam faucibus leo eget eros hendrerit, non laoreet ipsum lacinia. Curabitur cursus diam elit, non tempus ante volutpat a. Quisque hendrerit blandit purus non fringilla. Integer sit amet elit viverra ante dapibus semper. Vestibulum viverra rutrum enim, at luctus enim posuere eu. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
+    "crumbs": [
+      "Overview"
+    ]
+  },
+  {
+    "objectID": "pages/overview.html#learning-more",
+    "href": "pages/overview.html#learning-more",
+    "title": "Overview",
+    "section": "Learning more",
+    "text": "Learning more\nGo to the anvanced page to learn how to …\n\nExamples page: sites using quartodoc.",
+    "crumbs": [
+      "Overview"
+    ]
+  },
+  {
+    "objectID": "api/ExerciseResult.html",
+    "href": "api/ExerciseResult.html",
+    "title": "ExerciseResult",
+    "section": "",
+    "text": "script_widget.executor.ExerciseResult(\n    stdout='',\n    stderr='',\n    outputs=None,\n    error=None,\n    traceback=None,\n)\nThe outcome of running one %%exercise cell.\n\n\n\nstdout : str\n\nEverything the cell printed to stdout.\n\nstderr : str\n\nEverything the cell printed to stderr.\n\noutputs : list of dict\n\nRich display MIME bundles produced by the cell – a trailing bare expression’s repr, an explicit display(...) call, or (when run with a live IPython shell) a matplotlib figure flushed after execution. Each entry maps MIME type to its data, e.g. {\"image/png\": \"&lt;base64&gt;\", \"text/plain\": \"...\"}.\n\nerror : str or None\n\nA short \"ExceptionType: message\" summary if the cell failed to parse or raised while running, else None.\n\ntraceback : str or None\n\nThe full formatted traceback for error, else None.",
+    "crumbs": [
+      "Executor",
+      "ExerciseResult"
+    ]
+  },
+  {
+    "objectID": "api/ExerciseResult.html#attributes",
+    "href": "api/ExerciseResult.html#attributes",
+    "title": "ExerciseResult",
+    "section": "",
+    "text": "stdout : str\n\nEverything the cell printed to stdout.\n\nstderr : str\n\nEverything the cell printed to stderr.\n\noutputs : list of dict\n\nRich display MIME bundles produced by the cell – a trailing bare expression’s repr, an explicit display(...) call, or (when run with a live IPython shell) a matplotlib figure flushed after execution. Each entry maps MIME type to its data, e.g. {\"image/png\": \"&lt;base64&gt;\", \"text/plain\": \"...\"}.\n\nerror : str or None\n\nA short \"ExceptionType: message\" summary if the cell failed to parse or raised while running, else None.\n\ntraceback : str or None\n\nThe full formatted traceback for error, else None.",
+    "crumbs": [
+      "Executor",
+      "ExerciseResult"
+    ]
+  },
+  {
+    "objectID": "api/register_exercise_magic.html",
+    "href": "api/register_exercise_magic.html",
+    "title": "register_exercise_magic",
+    "section": "",
+    "text": "register_exercise_magic\nscript_widget.widget.register_exercise_magic(ipython=None)\nRegister the %%exercise cell magic.\nIn IPython/Jupyter, %%exercise runs the cell body in a fresh, isolated namespace (see executor.run_exercise) and displays everything it produced – stdout, stderr, rich output, any exception – in a shaded ExerciseOutputWidget below the cell::\n%%exercise\nimport matplotlib.pyplot as plt\nplt.plot([1, 2, 3])\nNothing the cell defines or imports persists past that one run, and nothing the notebook has already defined is visible to it except through the cell’s own imports.\nCalled automatically on import; returns True when a live shell is found, False otherwise (e.g. plain Python).",
+    "crumbs": [
+      "Widget",
+      "register_exercise_magic"
+    ]
+  },
+  {
+    "objectID": "api/run_exercise.html",
+    "href": "api/run_exercise.html",
+    "title": "run_exercise",
+    "section": "",
+    "text": "script_widget.executor.run_exercise(source, ip=None)\nRun source in a fresh, isolated namespace and capture everything it produced.\n\n\n\nsource : str\n\nThe cell body.\n\nip : InteractiveShell or None = None\n\nThe live IPython shell, if any. When given, stdout/stderr and rich display output (display(...) calls, a trailing bare expression’s repr, matplotlib figures) are captured via IPython.utils.capture.capture_output, and the shell’s post_execute event is triggered after running so any matplotlib-inline flush hook fires exactly as it would after a normal cell. Without ip (e.g. under plain pytest), only stdout/stderr are captured and the trailing value (if any) is reported as a text/plain output.\n\n\n\n\n\n\n : ExerciseResult",
+    "crumbs": [
+      "Executor",
+      "run_exercise"
+    ]
+  },
+  {
+    "objectID": "api/run_exercise.html#parameters",
+    "href": "api/run_exercise.html#parameters",
+    "title": "run_exercise",
+    "section": "",
+    "text": "source : str\n\nThe cell body.\n\nip : InteractiveShell or None = None\n\nThe live IPython shell, if any. When given, stdout/stderr and rich display output (display(...) calls, a trailing bare expression’s repr, matplotlib figures) are captured via IPython.utils.capture.capture_output, and the shell’s post_execute event is triggered after running so any matplotlib-inline flush hook fires exactly as it would after a normal cell. Without ip (e.g. under plain pytest), only stdout/stderr are captured and the trailing value (if any) is reported as a text/plain output.",
+    "crumbs": [
+      "Executor",
+      "run_exercise"
+    ]
+  },
+  {
+    "objectID": "api/run_exercise.html#returns",
+    "href": "api/run_exercise.html#returns",
+    "title": "run_exercise",
+    "section": "",
+    "text": ": ExerciseResult",
+    "crumbs": [
+      "Executor",
+      "run_exercise"
+    ]
+  },
+  {
+    "objectID": "api/ExerciseOutputWidget.html",
+    "href": "api/ExerciseOutputWidget.html",
+    "title": "ExerciseOutputWidget",
+    "section": "",
+    "text": "script_widget.widget.ExerciseOutputWidget(result)\nEverything a %%exercise cell produced, rendered in a shaded box.\n\n\n\nresult : script_widget.executor.ExerciseResult\n\nThe outcome of run_exercise. All traits below are copied from it once at construction time and never change afterward.\n\n\n\n\n\n\nstdout, stderr : str\n\nCaptured output streams.\n\noutputs : list of dict\n\nCaptured rich display MIME bundles (see ExerciseResult.outputs).\n\nsuccess : bool\n\nWhether the cell ran without raising.\n\nerror : str\n\nShort exception summary, or \"\" if none.\n\ntraceback : str\n\nFull formatted traceback, or \"\" if none.",
+    "crumbs": [
+      "Widget",
+      "ExerciseOutputWidget"
+    ]
+  },
+  {
+    "objectID": "api/ExerciseOutputWidget.html#parameters",
+    "href": "api/ExerciseOutputWidget.html#parameters",
+    "title": "ExerciseOutputWidget",
+    "section": "",
+    "text": "result : script_widget.executor.ExerciseResult\n\nThe outcome of run_exercise. All traits below are copied from it once at construction time and never change afterward.",
+    "crumbs": [
+      "Widget",
+      "ExerciseOutputWidget"
+    ]
+  },
+  {
+    "objectID": "api/ExerciseOutputWidget.html#attributes",
+    "href": "api/ExerciseOutputWidget.html#attributes",
+    "title": "ExerciseOutputWidget",
+    "section": "",
+    "text": "stdout, stderr : str\n\nCaptured output streams.\n\noutputs : list of dict\n\nCaptured rich display MIME bundles (see ExerciseResult.outputs).\n\nsuccess : bool\n\nWhether the cell ran without raising.\n\nerror : str\n\nShort exception summary, or \"\" if none.\n\ntraceback : str\n\nFull formatted traceback, or \"\" if none.",
+    "crumbs": [
+      "Widget",
+      "ExerciseOutputWidget"
+    ]
+  },
+  {
+    "objectID": "api/index.html",
+    "href": "api/index.html",
+    "title": "Function reference",
+    "section": "",
+    "text": "The engine behind %%exercise: run a cell body in a fresh, isolated namespace and capture everything it produced.\n\n\n\nrun_exercise\nRun source in a fresh, isolated namespace and capture everything\n\n\nExerciseResult\nThe outcome of running one %%exercise cell.\n\n\n\n\n\n\nThe anywidget-based output widget and the %%exercise cell magic.\n\n\n\nExerciseOutputWidget\nEverything a %%exercise cell produced, rendered in a shaded box.\n\n\nregister_exercise_magic\nRegister the %%exercise cell magic.",
+    "crumbs": [
+      "Function reference"
+    ]
+  },
+  {
+    "objectID": "api/index.html#executor",
+    "href": "api/index.html#executor",
+    "title": "Function reference",
+    "section": "",
+    "text": "The engine behind %%exercise: run a cell body in a fresh, isolated namespace and capture everything it produced.\n\n\n\nrun_exercise\nRun source in a fresh, isolated namespace and capture everything\n\n\nExerciseResult\nThe outcome of running one %%exercise cell.",
+    "crumbs": [
+      "Function reference"
+    ]
+  },
+  {
+    "objectID": "api/index.html#widget",
+    "href": "api/index.html#widget",
+    "title": "Function reference",
+    "section": "",
+    "text": "The anywidget-based output widget and the %%exercise cell magic.\n\n\n\nExerciseOutputWidget\nEverything a %%exercise cell produced, rendered in a shaded box.\n\n\nregister_exercise_magic\nRegister the %%exercise cell magic.",
+    "crumbs": [
+      "Function reference"
+    ]
+  },
+  {
+    "objectID": "pages/example.html",
+    "href": "pages/example.html",
+    "title": "Workplace interaction",
+    "section": "",
+    "text": "%load_ext autoreload\n%autoreload 2\nImport some plotting libraries and set some defaults:\nimport sys\nimport numpy as np\nimport pandas as pd\nfrom IPython.display import display, Markdown\nimport matplotlib.pyplot as plt\nimport seaborn as sns\nsns.set()\nsns.set_style(\"whitegrid\")\nnp.random.seed(42)\n%config InlineBackend.figure_formats = ['svg']",
+    "crumbs": [
+      "Examples",
+      "Workplace interaction"
+    ]
+  },
+  {
+    "objectID": "pages/example.html#sampling",
+    "href": "pages/example.html#sampling",
+    "title": "Workplace interaction",
+    "section": "Sampling",
+    "text": "Sampling\n\nsubjects = pd.read_csv('../../data/data_table.csv')\nsample_size = subjects.shape[0]\n\n\nTip:\nBy adding a label and caption to a cell displaying a table, you can refer to that table elsewhere and insert it in a manuscript.\n\n\nsubjects\n\n\n\nTable 1: People included in the analysis.\n\n\n\n\n\n\n\n\n\n\nname\nage\nsex\nposition\nnationality\n\n\n\n\n0\nJulie\n27\nF\nPhDstudent\nDK\n\n\n1\nThomas\n33\nM\nPostdoc\nGB\n\n\n2\nEmilie\n23\nF\nPhDstudent\nCH\n\n\n3\nSofie\n31\nF\nPostdoc\nDK\n\n\n4\nSara\n29\nF\nPostdoc\nUS\n\n\n5\nCecilie\n34\nF\nPostdoc\nDK\n\n\n6\nAnders\n32\nM\nPhDstudent\nUK\n\n\n7\nEmma\n42\nF\nProfessor\nDK\n\n\n8\nCaroline\n31\nF\nPhDstudent\nDK\n\n\n9\nLaura\n30\nF\nPostdoc\nDK\n\n\n10\nMikkel\n33\nM\nPostdoc\nNL\n\n\n11\nJens\n27\nM\nPhDstudent\nDK\n\n\n12\nAndreas\n29\nM\nPhDstudent\nDK\n\n\n13\nJakob\n28\nM\nPhDstudent\nDK\n\n\n14\nMathilde\n61\nF\nProfessor\nDK\n\n\n15\nKatrine\n35\nF\nPostdoc\nDK\n\n\n16\nPoul\n30\nM\nPostdoc\nDK\n\n\n17\nAnna\n26\nF\nPhDstudent\nDK\n\n\n18\nPeter\n42\nM\nProfessor\nGB\n\n\n19\nIda\n53\nF\nPostdoc\nDK\n\n\n20\nFreja\n30\nF\nPostdoc\nDK\n\n\n21\nMaria\n39\nF\nProfessor\nUK\n\n\n22\nAmalie\n29\nF\nPhDstudent\nDK\n\n\n23\nCamilla\n35\nF\nPostdoc\nDK\n\n\n\n\n\n\n\n\n\n\n\nTip:\nBy generaing markdown for descriptions that will eventually end up in the manuscript, you can imbed python values. It also ensures that the manuscript exactly reflects the notebook.\n\n\n\nThe 24 subjects from workplaces in Denmark were interviewed …. blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah",
+    "crumbs": [
+      "Examples",
+      "Workplace interaction"
+    ]
+  },
+  {
+    "objectID": "pages/example.html#interviews",
+    "href": "pages/example.html#interviews",
+    "title": "Workplace interaction",
+    "section": "Interviews",
+    "text": "Interviews\nIn interviewed {python} sample_size workplace individuals were interviewed by …. blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah,\n\n\n#| label: tbl-measured-informality\n#| tbl-cap: \"Informality quantified for subjects in the study.\"\n\ndf = pd.DataFrame({'name': subjects.name, \n                   'seniority': np.random.randint(0, 5, sample_size), \n                   'age': subjects.age})\ndf['informality'] = np.random.normal(loc=10, scale=1, size=sample_size)\ndf\n\n\n\n\n\n\n\n\nname\nseniority\nage\ninformality\n\n\n\n\n0\nJulie\n3\n27\n10.816445\n\n\n1\nThomas\n4\n33\n8.476124\n\n\n2\nEmilie\n2\n23\n9.571954\n\n\n3\nSofie\n4\n31\n9.257593\n\n\n4\nSara\n4\n29\n9.296656\n\n\n5\nCecilie\n1\n34\n7.860379\n\n\n6\nAnders\n2\n32\n9.370525\n\n\n7\nEmma\n2\n42\n10.597720\n\n\n8\nCaroline\n2\n31\n12.559488\n\n\n9\nLaura\n4\n30\n10.394233\n\n\n10\nMikkel\n3\n33\n10.122219\n\n\n11\nJens\n2\n27\n9.484564\n\n\n12\nAndreas\n4\n29\n9.399746\n\n\n13\nJakob\n1\n28\n10.947440\n\n\n14\nMathilde\n3\n61\n10.291034\n\n\n15\nKatrine\n1\n35\n9.364440\n\n\n16\nPoul\n3\n30\n8.978448\n\n\n17\nAnna\n4\n26\n9.838245\n\n\n18\nPeter\n0\n42\n9.466351\n\n\n19\nIda\n3\n53\n9.994472\n\n\n20\nFreja\n1\n30\n9.770550\n\n\n21\nMaria\n4\n39\n10.389349\n\n\n22\nAmalie\n3\n29\n8.734881\n\n\n23\nCamilla\n0\n35\n11.091992\n\n\n\n\n\n\n\n\ndf.groupby(['seniority']).mean(numeric_only=True).reset_index()\n\n\n\nTable 2: Mean interaction scores by seniority and age\n\n\n\n\n\n\n\n\n\n\nseniority\nage\ninformality\n\n\n\n\n0\n0\n38.500000\n10.279172\n\n\n1\n1\n31.750000\n9.485702\n\n\n2\n2\n31.000000\n10.316850\n\n\n3\n3\n38.833333\n9.822917\n\n\n4\n4\n31.000000\n9.578849\n\n\n\n\n\n\n\n\n\n\n\nsns.scatterplot(x='age', y='informality', data=df, hue='seniority', palette='viridis')\nplt.ylabel('How informal you can be')\nplt.xlabel('Age')\nplt.legend(title='Seniority', loc='lower right', labels=['Undergrad', 'Postgrad', 'PhD', 'Postdoc', 'Professor'])\nplt.ylim(bottom=0) ;\n\n\n\n\n\n\n\nFigure 1: Interaction among Danes: How Danes interact is has very little to do with age and seniority, compared to most other contries.\n\n\n\n\n\nSeems Danish people act very informally unaffected by age and seniority.\n\ninformality_age_cor = df.informality.corr(df.age)\ninformality_age_cor\n\nnp.float64(0.10942859782514087)\n\n\n\ninformality_seniority_cor = df.informality.corr(df.seniority)\ninformality_seniority_cor\n\nnp.float64(-0.13673439318448927)\n\n\n\n\nThe correlation between informality and age was 0.109 and the correlation between informality and seniority was -0.137.\n\n\n\nsns.lmplot(x='age', y='informality', data=df, hue='seniority', palette='viridis')\nplt.ylabel('How informal you can be')\nplt.xlabel('Age') ;\n\n\n\n\n\n\n\nFigure 2: Interaction among Danes: Regressions of informality against age for five levels of seniority.",
+    "crumbs": [
+      "Examples",
+      "Workplace interaction"
+    ]
+  }
+]
