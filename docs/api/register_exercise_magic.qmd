@@ -1,0 +1,23 @@
+# register_exercise_magic { #script_widget.widget.register_exercise_magic }
+
+```python
+script_widget.widget.register_exercise_magic(ipython=None)
+```
+
+Register the `%%exercise` cell magic.
+
+In IPython/Jupyter, `%%exercise` runs the cell body in a fresh, isolated
+namespace (see ``executor.run_exercise``) and displays everything it
+produced -- stdout, stderr, rich output, any exception -- in a shaded
+``ExerciseOutputWidget`` below the cell::
+
+    %%exercise
+    import matplotlib.pyplot as plt
+    plt.plot([1, 2, 3])
+
+Nothing the cell defines or imports persists past that one run, and
+nothing the notebook has already defined is visible to it except
+through the cell's own imports.
+
+Called automatically on import; returns True when a live shell is
+found, False otherwise (e.g. plain Python).

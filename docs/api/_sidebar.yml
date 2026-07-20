@@ -3,10 +3,12 @@ website:
   - contents:
     - api/index.qmd
     - contents:
-      - api/functionname.qmd
-      section: Some section
+      - api/run_exercise.qmd
+      - api/ExerciseResult.qmd
+      section: Executor
     - contents:
-      - api/scriptname.qmd
-      section: Some other section
+      - api/ExerciseOutputWidget.qmd
+      - api/register_exercise_magic.qmd
+      section: Widget
     id: api
   - id: dummy-sidebar

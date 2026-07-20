@@ -37,7 +37,7 @@ interlinks:
     #   inv: objects-test.txt
 
 website:
-  title: "munch-group-library"
+  title: "script-widget"
   page-navigation: true
   navbar:
     left:
@@ -47,7 +47,7 @@ website:
       #   text: Gallery
     right:
       - icon: github
-        href: https://github.com/munch-group/munch-group-library/
+        href: https://github.com/munch-group/script-widget/
   sidebar:
     - id: pages
       title: Get Started
@@ -76,7 +76,7 @@ format:
       theme: neutral 
 
 quartodoc:
-  package: munch-group-library
+  package: script-widget
   style: pkgdown
   dir: api
   render_interlinks: true
@@ -89,15 +89,18 @@ quartodoc:
   css: "api/_styles-quartodoc.css"
 
   sections:
-    - title: Some section
-      package: munch_group_library.modulename
+    - title: Executor
+      package: script_widget.executor
       desc: |
-        Some description...
+        The engine behind `%%exercise`: run a cell body in a fresh, isolated
+        namespace and capture everything it produced.
       contents:
-        - functionname
-    - title: Some other section
-      package: munch_group_library.modulename
+        - run_exercise
+        - ExerciseResult
+    - title: Widget
+      package: script_widget.widget
       desc: |
-        Some description...
+        The `anywidget`-based output widget and the `%%exercise` cell magic.
       contents:
-        - scriptname
+        - ExerciseOutputWidget
+        - register_exercise_magic

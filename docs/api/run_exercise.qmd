@@ -1,0 +1,24 @@
+# run_exercise { #script_widget.executor.run_exercise }
+
+```python
+script_widget.executor.run_exercise(source, ip=None)
+```
+
+Run ``source`` in a fresh, isolated namespace and capture everything
+it produced.
+
+## Parameters {.doc-section .doc-section-parameters}
+
+<code>[**source**]{.parameter-name} [:]{.parameter-annotation-sep} [[str](`str`)]{.parameter-annotation}</code>
+
+:   The cell body.
+
+<code>[**ip**]{.parameter-name} [:]{.parameter-annotation-sep} [[InteractiveShell](`InteractiveShell`) or None]{.parameter-annotation} [ = ]{.parameter-default-sep} [None]{.parameter-default}</code>
+
+:   The live IPython shell, if any. When given, stdout/stderr and rich display output (``display(...)`` calls, a trailing bare expression's repr, matplotlib figures) are captured via ``IPython.utils.capture.capture_output``, and the shell's ``post_execute`` event is triggered after running so any matplotlib-inline flush hook fires exactly as it would after a normal cell. Without ``ip`` (e.g. under plain ``pytest``), only stdout/stderr are captured and the trailing value (if any) is reported as a ``text/plain`` output.
+
+## Returns {.doc-section .doc-section-returns}
+
+<code>[]{.parameter-name} [:]{.parameter-annotation-sep} [[ExerciseResult](`script_widget.executor.ExerciseResult`)]{.parameter-annotation}</code>
+
+:   

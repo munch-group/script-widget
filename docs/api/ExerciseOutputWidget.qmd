@@ -1,0 +1,35 @@
+# ExerciseOutputWidget { #script_widget.widget.ExerciseOutputWidget }
+
+```python
+script_widget.widget.ExerciseOutputWidget(result)
+```
+
+Everything a ``%%exercise`` cell produced, rendered in a shaded box.
+
+## Parameters {.doc-section .doc-section-parameters}
+
+<code>[**result**]{.parameter-name} [:]{.parameter-annotation-sep} [[script_widget](`script_widget`).[executor](`script_widget.executor`).[ExerciseResult](`script_widget.executor.ExerciseResult`)]{.parameter-annotation}</code>
+
+:   The outcome of ``run_exercise``. All traits below are copied from it once at construction time and never change afterward.
+
+## Attributes {.doc-section .doc-section-attributes}
+
+<code>[**stdout, stderr**]{.parameter-name} [:]{.parameter-annotation-sep} [[str](`str`)]{.parameter-annotation}</code>
+
+:   Captured output streams.
+
+<code>[**outputs**]{.parameter-name} [:]{.parameter-annotation-sep} [list of dict]{.parameter-annotation}</code>
+
+:   Captured rich display MIME bundles (see ``ExerciseResult.outputs``).
+
+<code>[**success**]{.parameter-name} [:]{.parameter-annotation-sep} [[bool](`bool`)]{.parameter-annotation}</code>
+
+:   Whether the cell ran without raising.
+
+<code>[**error**]{.parameter-name} [:]{.parameter-annotation-sep} [[str](`str`)]{.parameter-annotation}</code>
+
+:   Short exception summary, or ``""`` if none.
+
+<code>[**traceback**]{.parameter-name} [:]{.parameter-annotation-sep} [[str](`str`)]{.parameter-annotation}</code>
+
+:   Full formatted traceback, or ``""`` if none.

@@ -1,0 +1,35 @@
+# ExerciseResult { #script_widget.executor.ExerciseResult }
+
+```python
+script_widget.executor.ExerciseResult(
+    stdout='',
+    stderr='',
+    outputs=None,
+    error=None,
+    traceback=None,
+)
+```
+
+The outcome of running one ``%%exercise`` cell.
+
+## Attributes {.doc-section .doc-section-attributes}
+
+<code>[**stdout**]{.parameter-name} [:]{.parameter-annotation-sep} [[str](`str`)]{.parameter-annotation}</code>
+
+:   Everything the cell printed to stdout.
+
+<code>[**stderr**]{.parameter-name} [:]{.parameter-annotation-sep} [[str](`str`)]{.parameter-annotation}</code>
+
+:   Everything the cell printed to stderr.
+
+<code>[**outputs**]{.parameter-name} [:]{.parameter-annotation-sep} [list of dict]{.parameter-annotation}</code>
+
+:   Rich display MIME bundles produced by the cell -- a trailing bare expression's repr, an explicit ``display(...)`` call, or (when run with a live IPython shell) a matplotlib figure flushed after execution. Each entry maps MIME type to its data, e.g. ``{"image/png": "<base64>", "text/plain": "..."}``.
+
+<code>[**error**]{.parameter-name} [:]{.parameter-annotation-sep} [[str](`str`) or None]{.parameter-annotation}</code>
+
+:   A short ``"ExceptionType: message"`` summary if the cell failed to parse or raised while running, else ``None``.
+
+<code>[**traceback**]{.parameter-name} [:]{.parameter-annotation-sep} [[str](`str`) or None]{.parameter-annotation}</code>
+
+:   The full formatted traceback for ``error``, else ``None``.

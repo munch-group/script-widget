@@ -1,19 +1,22 @@
 # Function reference {.doc .doc-index}
 
-## Some section
+## Executor
 
-Some description...
-
-
-| | |
-| --- | --- |
-| [functionname](functionname.qmd#munch_group_library.modulename.functionname) | The sum of two numbers. |
-
-## Some other section
-
-Some description...
+The engine behind `%%exercise`: run a cell body in a fresh, isolated
+namespace and capture everything it produced.
 
 
 | | |
 | --- | --- |
-| [scriptname](scriptname.qmd#munch_group_library.modulename.scriptname) |  |
+| [run_exercise](run_exercise.qmd#script_widget.executor.run_exercise) | Run ``source`` in a fresh, isolated namespace and capture everything |
+| [ExerciseResult](ExerciseResult.qmd#script_widget.executor.ExerciseResult) | The outcome of running one ``%%exercise`` cell. |
+
+## Widget
+
+The `anywidget`-based output widget and the `%%exercise` cell magic.
+
+
+| | |
+| --- | --- |
+| [ExerciseOutputWidget](ExerciseOutputWidget.qmd#script_widget.widget.ExerciseOutputWidget) | Everything a ``%%exercise`` cell produced, rendered in a shaded box. |
+| [register_exercise_magic](register_exercise_magic.qmd#script_widget.widget.register_exercise_magic) | Register the `%%exercise` cell magic. |

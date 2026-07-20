@@ -3,11 +3,11 @@ requires = ["setuptools>=61.0", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "munch-group-library"
+name = "script-widget"
 version = "0.1.16"
-description = "Project description"
+description = "Jupyter widget that runs a cell in a fresh, isolated namespace (the %%exercise cell magic)"
 authors = [
-    {name = "Your Name", email = "your@email.com"}
+    {name = "Kasper Munch", email = "kaspermunch@birc.au.dk"}
 ]
 readme = "README.md"
 license = {text = "MIT"}
@@ -17,16 +17,15 @@ classifiers = [
     "Programming Language :: Python :: 3",
 ]
 dependencies = [
-
+    "anywidget>=0.11,<0.12",
+    "traitlets>=5.0",
+    "ipython",
 ]
 
 [project.urls]
-Homepage = "https://github.com/munch-group/munch-group-library"
-Repository = "https://github.com/munch-group/munch-group-library"
-Documentation = "https://munch-group.org/munch-group-library"
-
-[project.scripts]
-munch-group-library = "munch_group_library:munch_group_library"
+Homepage = "https://github.com/munch-group/script-widget"
+Repository = "https://github.com/munch-group/script-widget"
+Documentation = "https://munch-group.org/script-widget"
 
 [tool.setuptools]
 include-package-data = true
@@ -36,7 +35,7 @@ where = ["src"]
 exclude = ["test*"]
 
 [tool.setuptools.package-data]
-munch_group_library = ["data/*.txt", "data/*.csv", "data/*.pickle", "data/*.h5"]
+script_widget = ["data/*.txt", "data/*.csv", "data/*.pickle", "data/*.h5"]
 
 [tool.pixi.workspace]
 channels = ["conda-forge", "munch-group"]
@@ -46,23 +45,31 @@ platforms = ["osx-arm64",  "linux-64"]
 python = ">=3.9,<3.14"
 pytest = "*"
 jupyter = "*"
-quarto = "*"
-quartodoc = "*"
+quarto = ">=1.9.38,<2"
+quartodoc = ">=0.11.1,<0.12"
+# quartodoc 0.11.1's conda-forge package declares an unbounded "griffe>=0.33"
+# runtime dependency, but hardcodes a numpy-docstring parser option
+# ("allow_section_blank_line") that griffe 2.x removed from parse_numpy()'s
+# signature -- an upstream packaging gap (missing "<2" cap), not a
+# script-widget bug. Pin griffe below 2 here until quartodoc/conda-forge fixes
+# their own bound (see puzzle-widget's pyproject.toml for the same pin).
+griffe = "<2"
 nbconvert = "*"
-anthropic = "*"
 pip = ">=25.2,<26"
 nodejs = ">=20,<23"
-git = "*"
-git-lfs = "*"
-gh = "*"
 ipython = "*"
-seaborn = "*"
-nbdime = ">=4.0.2,<5"
-vscodenb = "*"
-r-rsvg = "*"
+# Required by scripts/git-commit.sh: nbdime for semantic notebook diffs
+# (hard-required, script exits if missing), jq for parsing the Anthropic
+# API response used to draft commit messages.
+nbdime = "*"
+jq = "*"
+anywidget = ">=0.11.0,<0.12"
+# Dev/test only (not a script_widget runtime dependency) -- exercises the
+# %%exercise -> matplotlib figure capture path in test/test_executor.py.
+matplotlib-base = "*"
 
 # [tool.pixi.pypi-dependencies]
-# munch-group-library = { path = ".", editable = true }
+# script-widget = { path = ".", editable = true }
 
 [tool.pixi.environments]
 default = {solve-group = "default"}
@@ -91,8 +98,8 @@ cmd = "git clean -id"
 description = "Removes untracked files and directories but respects your .gitignores"
 
 [tool.pixi.tasks.test]
-cmd = "mkdir -p tests/pytest/tmp && jupyter nbconvert docs/pages/tutorial/*.ipynb --to script --TagRemovePreprocessor.enabled=True --TagRemovePreprocessor.remove_cell_tags='{\"skip-execution\"}' --output-dir tests/pytest/tmp && pytest tests/pytest/"
-description = "Run tests"
+cmd = "pytest test/"
+description = "Run the pytest suite"
 
 [tool.pixi.tasks.commit]
 cmd = "./scripts/git-commit.sh"
@@ -121,3 +128,6 @@ cmd = "./scripts/bump_version.py --{{ kind }} {{ flag }} && git add pyproject.to
 depends-on = ["test", "api", "docs", "commit"]
 description = "Bump version patch and push tag to build/upload conda/pypi packages"
 
+
+[tool.pytest.ini_options]
+testpaths = ["test"]
