@@ -1,5 +1,8 @@
 # CLAUDE.md
 
+This file provides guidance to Claude Code (claude.ai/code) when working
+with code in this repository.
+
 Project context for `script-widget` -- a Jupyter cell magic that runs a cell
 in a fresh, isolated namespace, built on
 [anywidget](https://anywidget.dev).
@@ -166,6 +169,9 @@ Pixi-managed (config in `pyproject.toml` under `[tool.pixi.*]`; channels
 
 - Dev install: `pixi run install-dev` (editable, no build isolation).
 - Run tests: `pixi run test` (== `pytest test/`).
+- Run a single test: `pixi run pytest test/test_executor.py::test_exception_is_caught_and_reported`
+  (or plain `pytest ...` -- `test/conftest.py` puts `src/` on `sys.path`, so
+  this works even without `install-dev`).
 - Try the widget: open a notebook, `import script_widget`, then
   ```
   %%exercise
@@ -184,6 +190,11 @@ Pixi-managed (config in `pyproject.toml` under `[tool.pixi.*]`; channels
 - Release: `pixi run bump` / `release` / `version` drive
   `scripts/bump_version.py` + a tag push, which triggers the conda/PyPI
   workflows.
+- Code review: `/review <target-file>` fans out specialist subagents
+  (Python, frontend, API consistency, UI heuristics, theming) into a
+  prioritized report under `.claude/review-reports/`; `/review-apply`
+  applies that report's findings in small, test-gated, one-commit-per-batch
+  steps. See `review-kit/README.md` for the full workflow.
 
 ## Distribution
 
