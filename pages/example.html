@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Workplace interaction – script-widget</title>
+<title>Examples – script-widget</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -79,9 +79,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-c98d9d0b3b0a085d3ddf71e6e91476d8.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
-<script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
-<link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
-<link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -112,6 +109,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+<script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@*/dist/embed-amd.js" crossorigin="anonymous"></script>
 
 
 <link rel="stylesheet" href="../api/_styles-quartodoc.css">
@@ -157,7 +155,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/example.html">Examples</a></li><li class="breadcrumb-item"><a href="../pages/example.html">Workplace interaction</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/example.html">Examples</a></li><li class="breadcrumb-item"><a href="../pages/example.html">Examples</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -187,7 +185,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../pages/example.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Workplace interaction</span></a>
+ <span class="menu-text">Examples</span></a>
   </div>
 </li>
       </ul>
@@ -202,17 +200,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#sampling" id="toc-sampling" class="nav-link active" data-scroll-target="#sampling">Sampling</a></li>
-  <li><a href="#interviews" id="toc-interviews" class="nav-link" data-scroll-target="#interviews">Interviews</a></li>
+  <li><a href="#a-cells-variables-dont-leak-out" id="toc-a-cells-variables-dont-leak-out" class="nav-link active" data-scroll-target="#a-cells-variables-dont-leak-out">A cell’s variables don’t leak out</a></li>
+  <li><a href="#reaching-an-already-imported-library" id="toc-reaching-an-already-imported-library" class="nav-link" data-scroll-target="#reaching-an-already-imported-library">Reaching an already-imported library</a></li>
+  <li><a href="#stdout-and-stderr" id="toc-stdout-and-stderr" class="nav-link" data-scroll-target="#stdout-and-stderr">stdout and stderr</a></li>
+  <li><a href="#learn-more" id="toc-learn-more" class="nav-link" data-scroll-target="#learn-more">Learn more</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/example.html">Examples</a></li><li class="breadcrumb-item"><a href="../pages/example.html">Workplace interaction</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/example.html">Examples</a></li><li class="breadcrumb-item"><a href="../pages/example.html">Examples</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Workplace interaction</h1>
+<h1 class="title">Examples</h1>
 </div>
 
 
@@ -229,598 +229,92 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<div id="cell-2" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-12-19T10:49:21.169198Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-12-19T10:49:21.169058Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-12-19T10:49:21.233482Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-12-19T10:49:21.232944Z&quot;}}" data-execution_count="1">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>load_ext autoreload</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>autoreload <span class="dv">2</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>A closer look at <code>%%exercise</code>: isolation between cells, how errors are reported, and the <code>sys.modules</code> trick that still lets a cell reach already-imported libraries.</p>
+<div id="1c30c11a" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-21T10:31:17.683583Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-21T10:31:17.683476Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-21T10:31:17.728253Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-21T10:31:17.727843Z&quot;}}" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> script_widget</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>Import some plotting libraries and set some defaults:</p>
-<div id="cell-4" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-12-19T10:49:21.235402Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-12-19T10:49:21.235225Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-12-19T10:49:23.887058Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-12-19T10:49:23.886624Z&quot;}}" data-execution_count="2">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> display, Markdown</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>sns.<span class="bu">set</span>()</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">"whitegrid"</span>)</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">42</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<blockquote class="blockquote">
-<p><strong>Tip:</strong><br>
-Producing figures in svg format (scalable vector graphics) makes for sharp plots on webpages. However, if you make plots with thousands of observations you should set this to <code>'png'</code> instead:</p>
-</blockquote>
-<div id="cell-6" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-12-19T10:49:23.888911Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-12-19T10:49:23.888698Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-12-19T10:49:23.911177Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-12-19T10:49:23.910652Z&quot;}}" data-execution_count="3">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>config InlineBackend.figure_formats <span class="op">=</span> [<span class="st">'svg'</span>] </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<section id="sampling" class="level2">
-<h2 class="anchored" data-anchor-id="sampling">Sampling</h2>
-<div id="cell-8" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-12-19T10:49:23.912707Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-12-19T10:49:23.912605Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-12-19T10:49:23.931859Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-12-19T10:49:23.931352Z&quot;}}" data-execution_count="4">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>subjects <span class="op">=</span> pd.read_csv(<span class="st">'../../data/data_table.csv'</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>sample_size <span class="op">=</span> subjects.shape[<span class="dv">0</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<blockquote class="blockquote">
-<p><strong>Tip:</strong><br>
-By adding a label and caption to a cell displaying a table, you can refer to that table elsewhere and insert it in a manuscript.</p>
-</blockquote>
-<div class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-12-19T10:49:23.933369Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-12-19T10:49:23.933260Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-12-19T10:49:23.955766Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-12-19T10:49:23.955229Z&quot;}}" data-execution_count="5">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>subjects</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div id="tbl-subjects" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="5" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-12-19T10:49:23.933369Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-12-19T10:49:23.933260Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-12-19T10:49:23.955766Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-12-19T10:49:23.955229Z&quot;}}">
-<figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-subjects-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;1: People included in the analysis.
-</figcaption>
-<div aria-describedby="tbl-subjects-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-display" data-execution_count="5">
-<div>
-
-
-<table class="dataframe cell caption-top table table-sm table-striped small" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">name</th>
-<th data-quarto-table-cell-role="th">age</th>
-<th data-quarto-table-cell-role="th">sex</th>
-<th data-quarto-table-cell-role="th">position</th>
-<th data-quarto-table-cell-role="th">nationality</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">0</th>
-<td>Julie</td>
-<td>27</td>
-<td>F</td>
-<td>PhDstudent</td>
-<td>DK</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">1</th>
-<td>Thomas</td>
-<td>33</td>
-<td>M</td>
-<td>Postdoc</td>
-<td>GB</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">2</th>
-<td>Emilie</td>
-<td>23</td>
-<td>F</td>
-<td>PhDstudent</td>
-<td>CH</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">3</th>
-<td>Sofie</td>
-<td>31</td>
-<td>F</td>
-<td>Postdoc</td>
-<td>DK</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">4</th>
-<td>Sara</td>
-<td>29</td>
-<td>F</td>
-<td>Postdoc</td>
-<td>US</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">5</th>
-<td>Cecilie</td>
-<td>34</td>
-<td>F</td>
-<td>Postdoc</td>
-<td>DK</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">6</th>
-<td>Anders</td>
-<td>32</td>
-<td>M</td>
-<td>PhDstudent</td>
-<td>UK</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">7</th>
-<td>Emma</td>
-<td>42</td>
-<td>F</td>
-<td>Professor</td>
-<td>DK</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">8</th>
-<td>Caroline</td>
-<td>31</td>
-<td>F</td>
-<td>PhDstudent</td>
-<td>DK</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">9</th>
-<td>Laura</td>
-<td>30</td>
-<td>F</td>
-<td>Postdoc</td>
-<td>DK</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">10</th>
-<td>Mikkel</td>
-<td>33</td>
-<td>M</td>
-<td>Postdoc</td>
-<td>NL</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">11</th>
-<td>Jens</td>
-<td>27</td>
-<td>M</td>
-<td>PhDstudent</td>
-<td>DK</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">12</th>
-<td>Andreas</td>
-<td>29</td>
-<td>M</td>
-<td>PhDstudent</td>
-<td>DK</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">13</th>
-<td>Jakob</td>
-<td>28</td>
-<td>M</td>
-<td>PhDstudent</td>
-<td>DK</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">14</th>
-<td>Mathilde</td>
-<td>61</td>
-<td>F</td>
-<td>Professor</td>
-<td>DK</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">15</th>
-<td>Katrine</td>
-<td>35</td>
-<td>F</td>
-<td>Postdoc</td>
-<td>DK</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">16</th>
-<td>Poul</td>
-<td>30</td>
-<td>M</td>
-<td>Postdoc</td>
-<td>DK</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">17</th>
-<td>Anna</td>
-<td>26</td>
-<td>F</td>
-<td>PhDstudent</td>
-<td>DK</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">18</th>
-<td>Peter</td>
-<td>42</td>
-<td>M</td>
-<td>Professor</td>
-<td>GB</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">19</th>
-<td>Ida</td>
-<td>53</td>
-<td>F</td>
-<td>Postdoc</td>
-<td>DK</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">20</th>
-<td>Freja</td>
-<td>30</td>
-<td>F</td>
-<td>Postdoc</td>
-<td>DK</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">21</th>
-<td>Maria</td>
-<td>39</td>
-<td>F</td>
-<td>Professor</td>
-<td>UK</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">22</th>
-<td>Amalie</td>
-<td>29</td>
-<td>F</td>
-<td>PhDstudent</td>
-<td>DK</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">23</th>
-<td>Camilla</td>
-<td>35</td>
-<td>F</td>
-<td>Postdoc</td>
-<td>DK</td>
-</tr>
-</tbody>
-</table>
-
+<section id="a-cells-variables-dont-leak-out" class="level2">
+<h2 class="anchored" data-anchor-id="a-cells-variables-dont-leak-out">A cell’s variables don’t leak out</h2>
+<p><code>%%exercise</code> runs in a namespace that’s fresh on every invocation, so a name a cell defines is gone once the cell finishes:</p>
+<div id="0e35f5b5" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-21T10:31:17.730022Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-21T10:31:17.729908Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-21T10:31:17.734431Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-21T10:31:17.734043Z&quot;}}" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>exercise</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="dv">42</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>x</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"1f9a5fcf4f184f3ca2be4c7984c00464","version_major":2,"version_minor":1,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
 </div>
 </div>
+<p>A later <code>%%exercise</code> cell can’t see it either – referencing <code>x</code> again raises a <code>NameError</code>. <code>%%exercise</code> catches that error and shows it in the box rather than crashing the notebook:</p>
+<div id="f454ff34" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-21T10:31:17.736496Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-21T10:31:17.736348Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-21T10:31:17.740216Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-21T10:31:17.739774Z&quot;}}" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>exercise</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>x</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"6f786643f4674ef6a4c1d246499fb059","version_major":2,"version_minor":1,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
 </div>
-</figure>
 </div>
-</div>
-<blockquote class="blockquote">
-<p><strong>Tip:</strong><br>
-By generaing markdown for descriptions that will eventually end up in the manuscript, you can imbed python values. It also ensures that the manuscript exactly reflects the notebook.</p>
-</blockquote>
-<div id="cell-doc-sampling" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-12-19T10:49:23.978311Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-12-19T10:49:23.978175Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-12-19T10:49:23.994771Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-12-19T10:49:23.994297Z&quot;}}" data-execution_count="6">
-<div id="doc-sampling" class="cell-output cell-output-display cell-output-markdown" data-execution_count="6">
-<p>The 24 subjects from workplaces in Denmark were interviewed …. blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah</p>
+<p>The same is true of any exception the cell raises – it’s reported with its full traceback, not propagated to the notebook:</p>
+<div id="ce9b648f" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-21T10:31:17.742164Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-21T10:31:17.742063Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-21T10:31:17.745601Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-21T10:31:17.745207Z&quot;}}" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>exercise</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="op">/</span> <span class="dv">0</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"4da6e77fc8304d36a55a5895ff01fd16","version_major":2,"version_minor":1,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
 </div>
 </div>
 </section>
-<section id="interviews" class="level2">
-<h2 class="anchored" data-anchor-id="interviews">Interviews</h2>
-<p>In interviewed <code>{python} sample_size</code> workplace individuals were interviewed by …. blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah,</p>
-<div id="cell-16" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-12-19T10:49:23.996333Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-12-19T10:49:23.996215Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-12-19T10:49:24.016167Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-12-19T10:49:24.015635Z&quot;}}" data-execution_count="7">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-measured-informality</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Informality quantified for subjects in the study."</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame({<span class="st">'name'</span>: subjects.name, </span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>                   <span class="st">'seniority'</span>: np.random.randint(<span class="dv">0</span>, <span class="dv">5</span>, sample_size), </span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>                   <span class="st">'age'</span>: subjects.age})</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'informality'</span>] <span class="op">=</span> np.random.normal(loc<span class="op">=</span><span class="dv">10</span>, scale<span class="op">=</span><span class="dv">1</span>, size<span class="op">=</span>sample_size)</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>df</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="7">
-<div>
-
-
-<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">name</th>
-<th data-quarto-table-cell-role="th">seniority</th>
-<th data-quarto-table-cell-role="th">age</th>
-<th data-quarto-table-cell-role="th">informality</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">0</th>
-<td>Julie</td>
-<td>3</td>
-<td>27</td>
-<td>10.816445</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">1</th>
-<td>Thomas</td>
-<td>4</td>
-<td>33</td>
-<td>8.476124</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">2</th>
-<td>Emilie</td>
-<td>2</td>
-<td>23</td>
-<td>9.571954</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">3</th>
-<td>Sofie</td>
-<td>4</td>
-<td>31</td>
-<td>9.257593</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">4</th>
-<td>Sara</td>
-<td>4</td>
-<td>29</td>
-<td>9.296656</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">5</th>
-<td>Cecilie</td>
-<td>1</td>
-<td>34</td>
-<td>7.860379</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">6</th>
-<td>Anders</td>
-<td>2</td>
-<td>32</td>
-<td>9.370525</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">7</th>
-<td>Emma</td>
-<td>2</td>
-<td>42</td>
-<td>10.597720</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">8</th>
-<td>Caroline</td>
-<td>2</td>
-<td>31</td>
-<td>12.559488</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">9</th>
-<td>Laura</td>
-<td>4</td>
-<td>30</td>
-<td>10.394233</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">10</th>
-<td>Mikkel</td>
-<td>3</td>
-<td>33</td>
-<td>10.122219</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">11</th>
-<td>Jens</td>
-<td>2</td>
-<td>27</td>
-<td>9.484564</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">12</th>
-<td>Andreas</td>
-<td>4</td>
-<td>29</td>
-<td>9.399746</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">13</th>
-<td>Jakob</td>
-<td>1</td>
-<td>28</td>
-<td>10.947440</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">14</th>
-<td>Mathilde</td>
-<td>3</td>
-<td>61</td>
-<td>10.291034</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">15</th>
-<td>Katrine</td>
-<td>1</td>
-<td>35</td>
-<td>9.364440</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">16</th>
-<td>Poul</td>
-<td>3</td>
-<td>30</td>
-<td>8.978448</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">17</th>
-<td>Anna</td>
-<td>4</td>
-<td>26</td>
-<td>9.838245</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">18</th>
-<td>Peter</td>
-<td>0</td>
-<td>42</td>
-<td>9.466351</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">19</th>
-<td>Ida</td>
-<td>3</td>
-<td>53</td>
-<td>9.994472</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">20</th>
-<td>Freja</td>
-<td>1</td>
-<td>30</td>
-<td>9.770550</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">21</th>
-<td>Maria</td>
-<td>4</td>
-<td>39</td>
-<td>10.389349</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">22</th>
-<td>Amalie</td>
-<td>3</td>
-<td>29</td>
-<td>8.734881</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">23</th>
-<td>Camilla</td>
-<td>0</td>
-<td>35</td>
-<td>11.091992</td>
-</tr>
-</tbody>
-</table>
-
-</div>
-</div>
-</div>
-<div class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-12-19T10:49:24.017659Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-12-19T10:49:24.017531Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-12-19T10:49:24.038567Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-12-19T10:49:24.038030Z&quot;}}" data-execution_count="8">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>df.groupby([<span class="st">'seniority'</span>]).mean(numeric_only<span class="op">=</span><span class="va">True</span>).reset_index()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div id="tbl-mean-informality" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="8" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-12-19T10:49:24.017659Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-12-19T10:49:24.017531Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-12-19T10:49:24.038567Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-12-19T10:49:24.038030Z&quot;}}">
-<figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-mean-informality-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;2: Mean interaction scores by seniority and age
-</figcaption>
-<div aria-describedby="tbl-mean-informality-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-display" data-execution_count="8">
-<div>
-
-
-<table class="dataframe cell caption-top table table-sm table-striped small" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">seniority</th>
-<th data-quarto-table-cell-role="th">age</th>
-<th data-quarto-table-cell-role="th">informality</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">0</th>
-<td>0</td>
-<td>38.500000</td>
-<td>10.279172</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">1</th>
-<td>1</td>
-<td>31.750000</td>
-<td>9.485702</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">2</th>
-<td>2</td>
-<td>31.000000</td>
-<td>10.316850</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">3</th>
-<td>3</td>
-<td>38.833333</td>
-<td>9.822917</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">4</th>
-<td>4</td>
-<td>31.000000</td>
-<td>9.578849</td>
-</tr>
-</tbody>
-</table>
-
-</div>
-</div>
-</div>
-</figure>
-</div>
-</div>
-<div id="cell-fig-danish-interaction" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-12-19T10:49:24.039938Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-12-19T10:49:24.039819Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-12-19T10:49:24.160645Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-12-19T10:49:24.160142Z&quot;}}" data-execution_count="9">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>sns.scatterplot(x<span class="op">=</span><span class="st">'age'</span>, y<span class="op">=</span><span class="st">'informality'</span>, data<span class="op">=</span>df, hue<span class="op">=</span><span class="st">'seniority'</span>, palette<span class="op">=</span><span class="st">'viridis'</span>)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'How informal you can be'</span>)</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Age'</span>)</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>plt.legend(title<span class="op">=</span><span class="st">'Seniority'</span>, loc<span class="op">=</span><span class="st">'lower right'</span>, labels<span class="op">=</span>[<span class="st">'Undergrad'</span>, <span class="st">'Postgrad'</span>, <span class="st">'PhD'</span>, <span class="st">'Postdoc'</span>, <span class="st">'Professor'</span>])</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>plt.ylim(bottom<span class="op">=</span><span class="dv">0</span>) <span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="reaching-an-already-imported-library" class="level2">
+<h2 class="anchored" data-anchor-id="reaching-an-already-imported-library">Reaching an already-imported library</h2>
+<p><code>import matplotlib.pyplot as plt</code> inside the cell isn’t blocked by the fresh namespace – Python’s <code>sys.modules</code> cache hands back the exact same module object the notebook already has, not a fresh reload. Mutating it – here, the default line width – is visible outside the cell too:</p>
+<div id="1ca47f1e" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-21T10:31:17.747403Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-21T10:31:17.747291Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-21T10:31:18.059043Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-21T10:31:18.058333Z&quot;}}" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>exercise</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'lines.linewidth'</span>] <span class="op">=</span> <span class="dv">5</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">2</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
-<div id="fig-danish-interaction" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-danish-interaction-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="example_files/figure-html/fig-danish-interaction-output-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Figure&nbsp;1: Interaction among Danes: How Danes interact is has very little to do with age and seniority, compared to most other contries."><img src="example_files/figure-html/fig-danish-interaction-output-1.svg" class="img-fluid figure-img"></a>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-danish-interaction-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1: Interaction among Danes: How Danes interact is has very little to do with age and seniority, compared to most other contries.
-</figcaption>
-</figure>
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"21cafcb5b216476d94099c687806ae28","version_major":2,"version_minor":1,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
 </div>
 </div>
-</div>
-<p>Seems Danish people act very informally unaffected by age and seniority.</p>
-<div id="cell-21" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-12-19T10:49:24.162267Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-12-19T10:49:24.162149Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-12-19T10:49:24.178336Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-12-19T10:49:24.177930Z&quot;}}" data-execution_count="10">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>informality_age_cor <span class="op">=</span> df.informality.corr(df.age)</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>informality_age_cor</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="10">
-<pre><code>np.float64(0.10942859782514087)</code></pre>
+<div id="e62be99e" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-21T10:31:18.061102Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-21T10:31:18.060957Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-21T10:31:18.064295Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-21T10:31:18.063730Z&quot;}}" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'lines.linewidth'</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<pre><code>5.0</code></pre>
 </div>
 </div>
-<div id="cell-22" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-12-19T10:49:24.179716Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-12-19T10:49:24.179605Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-12-19T10:49:24.196748Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-12-19T10:49:24.196240Z&quot;}}" data-execution_count="11">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>informality_seniority_cor <span class="op">=</span> df.informality.corr(df.seniority)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>informality_seniority_cor</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="11">
-<pre><code>np.float64(-0.13673439318448927)</code></pre>
-</div>
-</div>
-<div id="cell-doc-formality-correlation" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-12-19T10:49:24.198465Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-12-19T10:49:24.198326Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-12-19T10:49:24.215663Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-12-19T10:49:24.215203Z&quot;}}" data-execution_count="12">
-<div id="doc-formality-correlation" class="cell-output cell-output-display cell-output-markdown" data-execution_count="12">
-<p>The correlation between informality and age was 0.109 and the correlation between informality and seniority was -0.137.</p>
-</div>
-</div>
-<div id="cell-fig-danish-interaction-regressions" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-12-19T10:49:24.217283Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-12-19T10:49:24.217143Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-12-19T10:49:24.556261Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-12-19T10:49:24.555676Z&quot;}}" data-execution_count="13">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>sns.lmplot(x<span class="op">=</span><span class="st">'age'</span>, y<span class="op">=</span><span class="st">'informality'</span>, data<span class="op">=</span>df, hue<span class="op">=</span><span class="st">'seniority'</span>, palette<span class="op">=</span><span class="st">'viridis'</span>)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'How informal you can be'</span>)</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Age'</span>) <span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="stdout-and-stderr" class="level2">
+<h2 class="anchored" data-anchor-id="stdout-and-stderr">stdout and stderr</h2>
+<p>Both streams are captured and shown separately:</p>
+<div id="e146775c" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-21T10:31:18.066021Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-21T10:31:18.065907Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-21T10:31:18.070210Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-21T10:31:18.069384Z&quot;}}" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>exercise</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'to stdout'</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'to stderr'</span>, <span class="bu">file</span><span class="op">=</span>sys.stderr)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
-<div id="fig-danish-interaction-regressions" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-danish-interaction-regressions-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="example_files/figure-html/fig-danish-interaction-regressions-output-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;2: Interaction among Danes: Regressions of informality against age for five levels of seniority."><img src="example_files/figure-html/fig-danish-interaction-regressions-output-1.svg" class="img-fluid figure-img"></a>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-danish-interaction-regressions-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2: Interaction among Danes: Regressions of informality against age for five levels of seniority.
-</figcaption>
-</figure>
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"62da9ca4e2064b20bd423f58286f95b8","version_major":2,"version_minor":1,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
 </div>
 </div>
-</div>
+</section>
+<section id="learn-more" class="level2">
+<h2 class="anchored" data-anchor-id="learn-more">Learn more</h2>
+<p>See the <a href="../pages/overview.html">Overview</a> for installation and a summary of how <code>%%exercise</code> works, or the <a href="../api/index.html">API reference</a> for the full reference of <code>run_exercise</code>, <code>ExerciseResult</code>, and the widget.</p>
 
 
 </section>
 
 </main> <!-- /main -->
+<script type="application/vnd.jupyter.widget-state+json">
+{"state":{"1f9a5fcf4f184f3ca2be4c7984c00464":{"model_module":"anywidget","model_module_version":"~0.11.*","model_name":"AnyModel","state":{"_anywidget_id":"script_widget.widget.ExerciseOutputWidget","_css":"\n/* Styles for the DOM built in _ESM's render(): a shaded, left-accented box\n   (.sw-root) so %%exercise output reads as visually distinct from a normal\n   cell's plain output -- .sw-badge, then any of .sw-stdout/.sw-stderr/\n   rendered outputs (.sw-image/.sw-svg/.sw-html/.sw-text)/.sw-traceback. */\n.sw-root { display: flex; flex-direction: column; gap: 8px;\n  font-family: system-ui, -apple-system, \"Segoe UI\", sans-serif;\n  background: #f4f0ff; border-left: 4px solid #7c3aed; border-radius: 6px;\n  padding: 10px 14px; }\n.sw-root.sw-error { background: #fef2f2; border-left-color: #b91c1c; }\n.sw-badge { font-size: 12px; font-weight: 600; letter-spacing: .02em; color: #5b21b6; }\n.sw-root.sw-error .sw-badge { color: #b91c1c; }\n.sw-stdout, .sw-stderr, .sw-text, .sw-traceback {\n  margin: 0; padding: 8px 10px; border-radius: 4px;\n  font-family: ui-monospace, SFMono-Regular, \"Cascadia Code\", Menlo, monospace;\n  font-size: 12.5px; white-space: pre-wrap; word-break: break-word; }\n.sw-stdout, .sw-text { background: #ffffff; color: #24292f; }\n.sw-stderr { background: #fff5f5; color: #9a3412; }\n.sw-traceback { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }\n.sw-image { max-width: 100%; border-radius: 4px; background: #fff; }\n.sw-html, .sw-svg { background: #fff; border-radius: 4px; padding: 6px; overflow-x: auto; }\n","_dom_classes":[],"_esm":"\n/** HTML-escape helper -- unused for text (textContent escapes automatically)\n *  but kept for any future spot that needs to build an HTML string directly. */\nfunction esc(s){\n  return String(s).replace(/&/g,\"&amp;\").replace(/</g,\"&lt;\").replace(/>/g,\"&gt;\");\n}\n\n/** MIME types in the order we prefer to render them, richest first --\n *  same preference order Jupyter itself uses for a display mimebundle. */\nconst MIME_PRIORITY = [\"image/png\", \"image/jpeg\", \"image/svg+xml\", \"text/html\", \"text/plain\"];\n\nfunction pickMime(data){\n  for (const mime of MIME_PRIORITY){\n    if (mime in data) return mime;\n  }\n  const keys = Object.keys(data);\n  return keys.length ? keys[0] : null;\n}\n\n/** Build a DOM node for one captured rich-display MIME bundle, picking the\n *  richest available representation. Returns null for an empty bundle. */\nfunction renderOutput(data){\n  const mime = pickMime(data);\n  if (mime == null) return null;\n  const value = data[mime];\n\n  if (mime === \"image/png\" || mime === \"image/jpeg\"){\n    const img = document.createElement(\"img\");\n    img.className = \"sw-image\";\n    img.src = \"data:\" + mime + \";base64,\" + value;\n    return img;\n  }\n  if (mime === \"image/svg+xml\"){\n    const wrap = document.createElement(\"div\");\n    wrap.className = \"sw-svg\";\n    wrap.innerHTML = value;\n    return wrap;\n  }\n  if (mime === \"text/html\"){\n    const wrap = document.createElement(\"div\");\n    wrap.className = \"sw-html\";\n    wrap.innerHTML = value;\n    return wrap;\n  }\n  const pre = document.createElement(\"pre\");\n  pre.className = \"sw-text\";\n  pre.textContent = Array.isArray(value) ? value.join(\"\") : String(value);\n  return pre;\n}\n\n/**\n * anywidget render entry point. An %%exercise result is fully determined at\n * widget-construction time and never changes afterward (unlike PuzzleWidget,\n * there's no interactive re-checking), so this draws once from the model's\n * initial state -- no change listeners needed.\n */\nfunction render({ model, el }){\n  const root = document.createElement(\"div\");\n  const success = model.get(\"success\");\n  root.className = \"sw-root \" + (success ? \"sw-ok\" : \"sw-error\");\n\n  const badge = document.createElement(\"div\");\n  badge.className = \"sw-badge\";\n  badge.textContent = (success ? \"\\u{1F512}\" : \"⚠️\") + \" isolated exercise\";\n  root.appendChild(badge);\n\n  const stdout = model.get(\"stdout\");\n  if (stdout){\n    const pre = document.createElement(\"pre\");\n    pre.className = \"sw-stdout\";\n    pre.textContent = stdout;\n    root.appendChild(pre);\n  }\n\n  const stderr = model.get(\"stderr\");\n  if (stderr){\n    const pre = document.createElement(\"pre\");\n    pre.className = \"sw-stderr\";\n    pre.textContent = stderr;\n    root.appendChild(pre);\n  }\n\n  (model.get(\"outputs\") || []).forEach((data) => {\n    const node = renderOutput(data);\n    if (node) root.appendChild(node);\n  });\n\n  const tb = model.get(\"traceback\");\n  if (tb){\n    const pre = document.createElement(\"pre\");\n    pre.className = \"sw-traceback\";\n    pre.textContent = tb;\n    root.appendChild(pre);\n  }\n\n  el.appendChild(root);\n}\n\nexport default { render };\n","_model_module":"anywidget","_model_module_version":"~0.11.*","_model_name":"AnyModel","_view_count":null,"_view_module":"anywidget","_view_module_version":"~0.11.*","_view_name":"AnyView","error":"","layout":"IPY_MODEL_b1b0dcce887048ccad37e51a076e371d","outputs":[{"text/plain":"42"}],"stderr":"","stdout":"","success":true,"tabbable":null,"tooltip":null,"traceback":""}},"21cafcb5b216476d94099c687806ae28":{"model_module":"anywidget","model_module_version":"~0.11.*","model_name":"AnyModel","state":{"_anywidget_id":"script_widget.widget.ExerciseOutputWidget","_css":"\n/* Styles for the DOM built in _ESM's render(): a shaded, left-accented box\n   (.sw-root) so %%exercise output reads as visually distinct from a normal\n   cell's plain output -- .sw-badge, then any of .sw-stdout/.sw-stderr/\n   rendered outputs (.sw-image/.sw-svg/.sw-html/.sw-text)/.sw-traceback. */\n.sw-root { display: flex; flex-direction: column; gap: 8px;\n  font-family: system-ui, -apple-system, \"Segoe UI\", sans-serif;\n  background: #f4f0ff; border-left: 4px solid #7c3aed; border-radius: 6px;\n  padding: 10px 14px; }\n.sw-root.sw-error { background: #fef2f2; border-left-color: #b91c1c; }\n.sw-badge { font-size: 12px; font-weight: 600; letter-spacing: .02em; color: #5b21b6; }\n.sw-root.sw-error .sw-badge { color: #b91c1c; }\n.sw-stdout, .sw-stderr, .sw-text, .sw-traceback {\n  margin: 0; padding: 8px 10px; border-radius: 4px;\n  font-family: ui-monospace, SFMono-Regular, \"Cascadia Code\", Menlo, monospace;\n  font-size: 12.5px; white-space: pre-wrap; word-break: break-word; }\n.sw-stdout, .sw-text { background: #ffffff; color: #24292f; }\n.sw-stderr { background: #fff5f5; color: #9a3412; }\n.sw-traceback { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }\n.sw-image { max-width: 100%; border-radius: 4px; background: #fff; }\n.sw-html, .sw-svg { background: #fff; border-radius: 4px; padding: 6px; overflow-x: auto; }\n","_dom_classes":[],"_esm":"\n/** HTML-escape helper -- unused for text (textContent escapes automatically)\n *  but kept for any future spot that needs to build an HTML string directly. */\nfunction esc(s){\n  return String(s).replace(/&/g,\"&amp;\").replace(/</g,\"&lt;\").replace(/>/g,\"&gt;\");\n}\n\n/** MIME types in the order we prefer to render them, richest first --\n *  same preference order Jupyter itself uses for a display mimebundle. */\nconst MIME_PRIORITY = [\"image/png\", \"image/jpeg\", \"image/svg+xml\", \"text/html\", \"text/plain\"];\n\nfunction pickMime(data){\n  for (const mime of MIME_PRIORITY){\n    if (mime in data) return mime;\n  }\n  const keys = Object.keys(data);\n  return keys.length ? keys[0] : null;\n}\n\n/** Build a DOM node for one captured rich-display MIME bundle, picking the\n *  richest available representation. Returns null for an empty bundle. */\nfunction renderOutput(data){\n  const mime = pickMime(data);\n  if (mime == null) return null;\n  const value = data[mime];\n\n  if (mime === \"image/png\" || mime === \"image/jpeg\"){\n    const img = document.createElement(\"img\");\n    img.className = \"sw-image\";\n    img.src = \"data:\" + mime + \";base64,\" + value;\n    return img;\n  }\n  if (mime === \"image/svg+xml\"){\n    const wrap = document.createElement(\"div\");\n    wrap.className = \"sw-svg\";\n    wrap.innerHTML = value;\n    return wrap;\n  }\n  if (mime === \"text/html\"){\n    const wrap = document.createElement(\"div\");\n    wrap.className = \"sw-html\";\n    wrap.innerHTML = value;\n    return wrap;\n  }\n  const pre = document.createElement(\"pre\");\n  pre.className = \"sw-text\";\n  pre.textContent = Array.isArray(value) ? value.join(\"\") : String(value);\n  return pre;\n}\n\n/**\n * anywidget render entry point. An %%exercise result is fully determined at\n * widget-construction time and never changes afterward (unlike PuzzleWidget,\n * there's no interactive re-checking), so this draws once from the model's\n * initial state -- no change listeners needed.\n */\nfunction render({ model, el }){\n  const root = document.createElement(\"div\");\n  const success = model.get(\"success\");\n  root.className = \"sw-root \" + (success ? \"sw-ok\" : \"sw-error\");\n\n  const badge = document.createElement(\"div\");\n  badge.className = \"sw-badge\";\n  badge.textContent = (success ? \"\\u{1F512}\" : \"⚠️\") + \" isolated exercise\";\n  root.appendChild(badge);\n\n  const stdout = model.get(\"stdout\");\n  if (stdout){\n    const pre = document.createElement(\"pre\");\n    pre.className = \"sw-stdout\";\n    pre.textContent = stdout;\n    root.appendChild(pre);\n  }\n\n  const stderr = model.get(\"stderr\");\n  if (stderr){\n    const pre = document.createElement(\"pre\");\n    pre.className = \"sw-stderr\";\n    pre.textContent = stderr;\n    root.appendChild(pre);\n  }\n\n  (model.get(\"outputs\") || []).forEach((data) => {\n    const node = renderOutput(data);\n    if (node) root.appendChild(node);\n  });\n\n  const tb = model.get(\"traceback\");\n  if (tb){\n    const pre = document.createElement(\"pre\");\n    pre.className = \"sw-traceback\";\n    pre.textContent = tb;\n    root.appendChild(pre);\n  }\n\n  el.appendChild(root);\n}\n\nexport default { render };\n","_model_module":"anywidget","_model_module_version":"~0.11.*","_model_name":"AnyModel","_view_count":null,"_view_module":"anywidget","_view_module_version":"~0.11.*","_view_name":"AnyView","error":"","layout":"IPY_MODEL_b3606b51d2eb4f829141b6f36b81cabb","outputs":[{"text/plain":"[<matplotlib.lines.Line2D at 0x1129acb90>]"},{"image/png":"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","text/plain":"<Figure size 640x480 with 1 Axes>"}],"stderr":"","stdout":"","success":true,"tabbable":null,"tooltip":null,"traceback":""}},"4da6e77fc8304d36a55a5895ff01fd16":{"model_module":"anywidget","model_module_version":"~0.11.*","model_name":"AnyModel","state":{"_anywidget_id":"script_widget.widget.ExerciseOutputWidget","_css":"\n/* Styles for the DOM built in _ESM's render(): a shaded, left-accented box\n   (.sw-root) so %%exercise output reads as visually distinct from a normal\n   cell's plain output -- .sw-badge, then any of .sw-stdout/.sw-stderr/\n   rendered outputs (.sw-image/.sw-svg/.sw-html/.sw-text)/.sw-traceback. */\n.sw-root { display: flex; flex-direction: column; gap: 8px;\n  font-family: system-ui, -apple-system, \"Segoe UI\", sans-serif;\n  background: #f4f0ff; border-left: 4px solid #7c3aed; border-radius: 6px;\n  padding: 10px 14px; }\n.sw-root.sw-error { background: #fef2f2; border-left-color: #b91c1c; }\n.sw-badge { font-size: 12px; font-weight: 600; letter-spacing: .02em; color: #5b21b6; }\n.sw-root.sw-error .sw-badge { color: #b91c1c; }\n.sw-stdout, .sw-stderr, .sw-text, .sw-traceback {\n  margin: 0; padding: 8px 10px; border-radius: 4px;\n  font-family: ui-monospace, SFMono-Regular, \"Cascadia Code\", Menlo, monospace;\n  font-size: 12.5px; white-space: pre-wrap; word-break: break-word; }\n.sw-stdout, .sw-text { background: #ffffff; color: #24292f; }\n.sw-stderr { background: #fff5f5; color: #9a3412; }\n.sw-traceback { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }\n.sw-image { max-width: 100%; border-radius: 4px; background: #fff; }\n.sw-html, .sw-svg { background: #fff; border-radius: 4px; padding: 6px; overflow-x: auto; }\n","_dom_classes":[],"_esm":"\n/** HTML-escape helper -- unused for text (textContent escapes automatically)\n *  but kept for any future spot that needs to build an HTML string directly. */\nfunction esc(s){\n  return String(s).replace(/&/g,\"&amp;\").replace(/</g,\"&lt;\").replace(/>/g,\"&gt;\");\n}\n\n/** MIME types in the order we prefer to render them, richest first --\n *  same preference order Jupyter itself uses for a display mimebundle. */\nconst MIME_PRIORITY = [\"image/png\", \"image/jpeg\", \"image/svg+xml\", \"text/html\", \"text/plain\"];\n\nfunction pickMime(data){\n  for (const mime of MIME_PRIORITY){\n    if (mime in data) return mime;\n  }\n  const keys = Object.keys(data);\n  return keys.length ? keys[0] : null;\n}\n\n/** Build a DOM node for one captured rich-display MIME bundle, picking the\n *  richest available representation. Returns null for an empty bundle. */\nfunction renderOutput(data){\n  const mime = pickMime(data);\n  if (mime == null) return null;\n  const value = data[mime];\n\n  if (mime === \"image/png\" || mime === \"image/jpeg\"){\n    const img = document.createElement(\"img\");\n    img.className = \"sw-image\";\n    img.src = \"data:\" + mime + \";base64,\" + value;\n    return img;\n  }\n  if (mime === \"image/svg+xml\"){\n    const wrap = document.createElement(\"div\");\n    wrap.className = \"sw-svg\";\n    wrap.innerHTML = value;\n    return wrap;\n  }\n  if (mime === \"text/html\"){\n    const wrap = document.createElement(\"div\");\n    wrap.className = \"sw-html\";\n    wrap.innerHTML = value;\n    return wrap;\n  }\n  const pre = document.createElement(\"pre\");\n  pre.className = \"sw-text\";\n  pre.textContent = Array.isArray(value) ? value.join(\"\") : String(value);\n  return pre;\n}\n\n/**\n * anywidget render entry point. An %%exercise result is fully determined at\n * widget-construction time and never changes afterward (unlike PuzzleWidget,\n * there's no interactive re-checking), so this draws once from the model's\n * initial state -- no change listeners needed.\n */\nfunction render({ model, el }){\n  const root = document.createElement(\"div\");\n  const success = model.get(\"success\");\n  root.className = \"sw-root \" + (success ? \"sw-ok\" : \"sw-error\");\n\n  const badge = document.createElement(\"div\");\n  badge.className = \"sw-badge\";\n  badge.textContent = (success ? \"\\u{1F512}\" : \"⚠️\") + \" isolated exercise\";\n  root.appendChild(badge);\n\n  const stdout = model.get(\"stdout\");\n  if (stdout){\n    const pre = document.createElement(\"pre\");\n    pre.className = \"sw-stdout\";\n    pre.textContent = stdout;\n    root.appendChild(pre);\n  }\n\n  const stderr = model.get(\"stderr\");\n  if (stderr){\n    const pre = document.createElement(\"pre\");\n    pre.className = \"sw-stderr\";\n    pre.textContent = stderr;\n    root.appendChild(pre);\n  }\n\n  (model.get(\"outputs\") || []).forEach((data) => {\n    const node = renderOutput(data);\n    if (node) root.appendChild(node);\n  });\n\n  const tb = model.get(\"traceback\");\n  if (tb){\n    const pre = document.createElement(\"pre\");\n    pre.className = \"sw-traceback\";\n    pre.textContent = tb;\n    root.appendChild(pre);\n  }\n\n  el.appendChild(root);\n}\n\nexport default { render };\n","_model_module":"anywidget","_model_module_version":"~0.11.*","_model_name":"AnyModel","_view_count":null,"_view_module":"anywidget","_view_module_version":"~0.11.*","_view_name":"AnyView","error":"ZeroDivisionError: division by zero","layout":"IPY_MODEL_b09ffdc0368649a895839bcbf7407298","outputs":[],"stderr":"","stdout":"","success":false,"tabbable":null,"tooltip":null,"traceback":"Traceback (most recent call last):\n  File \"/Users/kmt/script-widget/.pixi/envs/default/lib/python3.13/site-packages/script_widget/executor.py\", line 151, in _run_with_ipython\n    value = _last_line_value(tree, namespace)\n  File \"/Users/kmt/script-widget/.pixi/envs/default/lib/python3.13/site-packages/script_widget/executor.py\", line 89, in _last_line_value\n    return eval(compile(ast.Expression(body=last.value), \"<exercise>\", \"eval\"), namespace)\n  File \"<exercise>\", line 1, in <module>\nZeroDivisionError: division by zero\n"}},"60e0ebdd36a747649c81ac038a749e64":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"2.0.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border_bottom":null,"border_left":null,"border_right":null,"border_top":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"62da9ca4e2064b20bd423f58286f95b8":{"model_module":"anywidget","model_module_version":"~0.11.*","model_name":"AnyModel","state":{"_anywidget_id":"script_widget.widget.ExerciseOutputWidget","_css":"\n/* Styles for the DOM built in _ESM's render(): a shaded, left-accented box\n   (.sw-root) so %%exercise output reads as visually distinct from a normal\n   cell's plain output -- .sw-badge, then any of .sw-stdout/.sw-stderr/\n   rendered outputs (.sw-image/.sw-svg/.sw-html/.sw-text)/.sw-traceback. */\n.sw-root { display: flex; flex-direction: column; gap: 8px;\n  font-family: system-ui, -apple-system, \"Segoe UI\", sans-serif;\n  background: #f4f0ff; border-left: 4px solid #7c3aed; border-radius: 6px;\n  padding: 10px 14px; }\n.sw-root.sw-error { background: #fef2f2; border-left-color: #b91c1c; }\n.sw-badge { font-size: 12px; font-weight: 600; letter-spacing: .02em; color: #5b21b6; }\n.sw-root.sw-error .sw-badge { color: #b91c1c; }\n.sw-stdout, .sw-stderr, .sw-text, .sw-traceback {\n  margin: 0; padding: 8px 10px; border-radius: 4px;\n  font-family: ui-monospace, SFMono-Regular, \"Cascadia Code\", Menlo, monospace;\n  font-size: 12.5px; white-space: pre-wrap; word-break: break-word; }\n.sw-stdout, .sw-text { background: #ffffff; color: #24292f; }\n.sw-stderr { background: #fff5f5; color: #9a3412; }\n.sw-traceback { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }\n.sw-image { max-width: 100%; border-radius: 4px; background: #fff; }\n.sw-html, .sw-svg { background: #fff; border-radius: 4px; padding: 6px; overflow-x: auto; }\n","_dom_classes":[],"_esm":"\n/** HTML-escape helper -- unused for text (textContent escapes automatically)\n *  but kept for any future spot that needs to build an HTML string directly. */\nfunction esc(s){\n  return String(s).replace(/&/g,\"&amp;\").replace(/</g,\"&lt;\").replace(/>/g,\"&gt;\");\n}\n\n/** MIME types in the order we prefer to render them, richest first --\n *  same preference order Jupyter itself uses for a display mimebundle. */\nconst MIME_PRIORITY = [\"image/png\", \"image/jpeg\", \"image/svg+xml\", \"text/html\", \"text/plain\"];\n\nfunction pickMime(data){\n  for (const mime of MIME_PRIORITY){\n    if (mime in data) return mime;\n  }\n  const keys = Object.keys(data);\n  return keys.length ? keys[0] : null;\n}\n\n/** Build a DOM node for one captured rich-display MIME bundle, picking the\n *  richest available representation. Returns null for an empty bundle. */\nfunction renderOutput(data){\n  const mime = pickMime(data);\n  if (mime == null) return null;\n  const value = data[mime];\n\n  if (mime === \"image/png\" || mime === \"image/jpeg\"){\n    const img = document.createElement(\"img\");\n    img.className = \"sw-image\";\n    img.src = \"data:\" + mime + \";base64,\" + value;\n    return img;\n  }\n  if (mime === \"image/svg+xml\"){\n    const wrap = document.createElement(\"div\");\n    wrap.className = \"sw-svg\";\n    wrap.innerHTML = value;\n    return wrap;\n  }\n  if (mime === \"text/html\"){\n    const wrap = document.createElement(\"div\");\n    wrap.className = \"sw-html\";\n    wrap.innerHTML = value;\n    return wrap;\n  }\n  const pre = document.createElement(\"pre\");\n  pre.className = \"sw-text\";\n  pre.textContent = Array.isArray(value) ? value.join(\"\") : String(value);\n  return pre;\n}\n\n/**\n * anywidget render entry point. An %%exercise result is fully determined at\n * widget-construction time and never changes afterward (unlike PuzzleWidget,\n * there's no interactive re-checking), so this draws once from the model's\n * initial state -- no change listeners needed.\n */\nfunction render({ model, el }){\n  const root = document.createElement(\"div\");\n  const success = model.get(\"success\");\n  root.className = \"sw-root \" + (success ? \"sw-ok\" : \"sw-error\");\n\n  const badge = document.createElement(\"div\");\n  badge.className = \"sw-badge\";\n  badge.textContent = (success ? \"\\u{1F512}\" : \"⚠️\") + \" isolated exercise\";\n  root.appendChild(badge);\n\n  const stdout = model.get(\"stdout\");\n  if (stdout){\n    const pre = document.createElement(\"pre\");\n    pre.className = \"sw-stdout\";\n    pre.textContent = stdout;\n    root.appendChild(pre);\n  }\n\n  const stderr = model.get(\"stderr\");\n  if (stderr){\n    const pre = document.createElement(\"pre\");\n    pre.className = \"sw-stderr\";\n    pre.textContent = stderr;\n    root.appendChild(pre);\n  }\n\n  (model.get(\"outputs\") || []).forEach((data) => {\n    const node = renderOutput(data);\n    if (node) root.appendChild(node);\n  });\n\n  const tb = model.get(\"traceback\");\n  if (tb){\n    const pre = document.createElement(\"pre\");\n    pre.className = \"sw-traceback\";\n    pre.textContent = tb;\n    root.appendChild(pre);\n  }\n\n  el.appendChild(root);\n}\n\nexport default { render };\n","_model_module":"anywidget","_model_module_version":"~0.11.*","_model_name":"AnyModel","_view_count":null,"_view_module":"anywidget","_view_module_version":"~0.11.*","_view_name":"AnyView","error":"","layout":"IPY_MODEL_93471dcd10674cfcb8f9f91af80277d5","outputs":[],"stderr":"to stderr\n","stdout":"to stdout\n","success":true,"tabbable":null,"tooltip":null,"traceback":""}},"6f786643f4674ef6a4c1d246499fb059":{"model_module":"anywidget","model_module_version":"~0.11.*","model_name":"AnyModel","state":{"_anywidget_id":"script_widget.widget.ExerciseOutputWidget","_css":"\n/* Styles for the DOM built in _ESM's render(): a shaded, left-accented box\n   (.sw-root) so %%exercise output reads as visually distinct from a normal\n   cell's plain output -- .sw-badge, then any of .sw-stdout/.sw-stderr/\n   rendered outputs (.sw-image/.sw-svg/.sw-html/.sw-text)/.sw-traceback. */\n.sw-root { display: flex; flex-direction: column; gap: 8px;\n  font-family: system-ui, -apple-system, \"Segoe UI\", sans-serif;\n  background: #f4f0ff; border-left: 4px solid #7c3aed; border-radius: 6px;\n  padding: 10px 14px; }\n.sw-root.sw-error { background: #fef2f2; border-left-color: #b91c1c; }\n.sw-badge { font-size: 12px; font-weight: 600; letter-spacing: .02em; color: #5b21b6; }\n.sw-root.sw-error .sw-badge { color: #b91c1c; }\n.sw-stdout, .sw-stderr, .sw-text, .sw-traceback {\n  margin: 0; padding: 8px 10px; border-radius: 4px;\n  font-family: ui-monospace, SFMono-Regular, \"Cascadia Code\", Menlo, monospace;\n  font-size: 12.5px; white-space: pre-wrap; word-break: break-word; }\n.sw-stdout, .sw-text { background: #ffffff; color: #24292f; }\n.sw-stderr { background: #fff5f5; color: #9a3412; }\n.sw-traceback { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }\n.sw-image { max-width: 100%; border-radius: 4px; background: #fff; }\n.sw-html, .sw-svg { background: #fff; border-radius: 4px; padding: 6px; overflow-x: auto; }\n","_dom_classes":[],"_esm":"\n/** HTML-escape helper -- unused for text (textContent escapes automatically)\n *  but kept for any future spot that needs to build an HTML string directly. */\nfunction esc(s){\n  return String(s).replace(/&/g,\"&amp;\").replace(/</g,\"&lt;\").replace(/>/g,\"&gt;\");\n}\n\n/** MIME types in the order we prefer to render them, richest first --\n *  same preference order Jupyter itself uses for a display mimebundle. */\nconst MIME_PRIORITY = [\"image/png\", \"image/jpeg\", \"image/svg+xml\", \"text/html\", \"text/plain\"];\n\nfunction pickMime(data){\n  for (const mime of MIME_PRIORITY){\n    if (mime in data) return mime;\n  }\n  const keys = Object.keys(data);\n  return keys.length ? keys[0] : null;\n}\n\n/** Build a DOM node for one captured rich-display MIME bundle, picking the\n *  richest available representation. Returns null for an empty bundle. */\nfunction renderOutput(data){\n  const mime = pickMime(data);\n  if (mime == null) return null;\n  const value = data[mime];\n\n  if (mime === \"image/png\" || mime === \"image/jpeg\"){\n    const img = document.createElement(\"img\");\n    img.className = \"sw-image\";\n    img.src = \"data:\" + mime + \";base64,\" + value;\n    return img;\n  }\n  if (mime === \"image/svg+xml\"){\n    const wrap = document.createElement(\"div\");\n    wrap.className = \"sw-svg\";\n    wrap.innerHTML = value;\n    return wrap;\n  }\n  if (mime === \"text/html\"){\n    const wrap = document.createElement(\"div\");\n    wrap.className = \"sw-html\";\n    wrap.innerHTML = value;\n    return wrap;\n  }\n  const pre = document.createElement(\"pre\");\n  pre.className = \"sw-text\";\n  pre.textContent = Array.isArray(value) ? value.join(\"\") : String(value);\n  return pre;\n}\n\n/**\n * anywidget render entry point. An %%exercise result is fully determined at\n * widget-construction time and never changes afterward (unlike PuzzleWidget,\n * there's no interactive re-checking), so this draws once from the model's\n * initial state -- no change listeners needed.\n */\nfunction render({ model, el }){\n  const root = document.createElement(\"div\");\n  const success = model.get(\"success\");\n  root.className = \"sw-root \" + (success ? \"sw-ok\" : \"sw-error\");\n\n  const badge = document.createElement(\"div\");\n  badge.className = \"sw-badge\";\n  badge.textContent = (success ? \"\\u{1F512}\" : \"⚠️\") + \" isolated exercise\";\n  root.appendChild(badge);\n\n  const stdout = model.get(\"stdout\");\n  if (stdout){\n    const pre = document.createElement(\"pre\");\n    pre.className = \"sw-stdout\";\n    pre.textContent = stdout;\n    root.appendChild(pre);\n  }\n\n  const stderr = model.get(\"stderr\");\n  if (stderr){\n    const pre = document.createElement(\"pre\");\n    pre.className = \"sw-stderr\";\n    pre.textContent = stderr;\n    root.appendChild(pre);\n  }\n\n  (model.get(\"outputs\") || []).forEach((data) => {\n    const node = renderOutput(data);\n    if (node) root.appendChild(node);\n  });\n\n  const tb = model.get(\"traceback\");\n  if (tb){\n    const pre = document.createElement(\"pre\");\n    pre.className = \"sw-traceback\";\n    pre.textContent = tb;\n    root.appendChild(pre);\n  }\n\n  el.appendChild(root);\n}\n\nexport default { render };\n","_model_module":"anywidget","_model_module_version":"~0.11.*","_model_name":"AnyModel","_view_count":null,"_view_module":"anywidget","_view_module_version":"~0.11.*","_view_name":"AnyView","error":"NameError: name 'x' is not defined","layout":"IPY_MODEL_60e0ebdd36a747649c81ac038a749e64","outputs":[],"stderr":"","stdout":"","success":false,"tabbable":null,"tooltip":null,"traceback":"Traceback (most recent call last):\n  File \"/Users/kmt/script-widget/.pixi/envs/default/lib/python3.13/site-packages/script_widget/executor.py\", line 151, in _run_with_ipython\n    value = _last_line_value(tree, namespace)\n  File \"/Users/kmt/script-widget/.pixi/envs/default/lib/python3.13/site-packages/script_widget/executor.py\", line 89, in _last_line_value\n    return eval(compile(ast.Expression(body=last.value), \"<exercise>\", \"eval\"), namespace)\n  File \"<exercise>\", line 1, in <module>\nNameError: name 'x' is not defined\n"}},"93471dcd10674cfcb8f9f91af80277d5":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"2.0.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border_bottom":null,"border_left":null,"border_right":null,"border_top":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"b09ffdc0368649a895839bcbf7407298":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"2.0.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border_bottom":null,"border_left":null,"border_right":null,"border_top":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"b1b0dcce887048ccad37e51a076e371d":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"2.0.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border_bottom":null,"border_left":null,"border_right":null,"border_top":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"b3606b51d2eb4f829141b6f36b81cabb":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"2.0.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border_bottom":null,"border_left":null,"border_right":null,"border_top":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}}},"version_major":2,"version_minor":0}
+</script>
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";
@@ -1231,38 +725,6 @@ Figure&nbsp;2: Interaction among Danes: Regressions of informality against age f
   </div>
 </nav>
 </div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
-(function() {
-  let previousOnload = window.onload;
-  window.onload = () => {
-    if (previousOnload) {
-      previousOnload();
-    }
-    lightboxQuarto.on('slide_before_load', (data) => {
-      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
-      const href = trigger.getAttribute('href');
-      if (href !== null) {
-        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
-        if (imgEl !== null) {
-          const srcAttr = imgEl.getAttribute("src");
-          if (srcAttr && srcAttr.startsWith("data:")) {
-            slideConfig.href = srcAttr;
-          }
-        }
-      } 
-    });
-  
-    lightboxQuarto.on('slide_after_load', (data) => {
-      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
-      if (window.Quarto?.typesetMath) {
-        window.Quarto.typesetMath(slideNode);
-      }
-    });
-  
-  };
-  
-})();
-          </script>
 
 
 
