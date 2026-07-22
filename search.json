@@ -1,85 +1,87 @@
 [
   {
-    "objectID": "pages/overview.html",
-    "href": "pages/overview.html",
-    "title": "Overview",
+    "objectID": "pages/example.html",
+    "href": "pages/example.html",
+    "title": "Examples",
     "section": "",
-    "text": "script-widget provides a Jupyter cell magic, %%exercise, that runs a cell’s body in a namespace that’s fresh on every invocation and discarded afterward. Nothing the cell defines or imports persists past that one run, and nothing the notebook has already defined is visible to it – except through the cell’s own import/from ... import statements. Everything the cell produces – stdout, stderr, rich display output, any exception – is shown in a shaded box below the cell instead of the notebook’s normal output area.",
+    "text": "A closer look at %%exercise: isolation between cells, how errors are reported, and why importing an already-loaded library inside the cell doesn’t reach back into the notebook’s own copy of it.\nimport script_widget",
     "crumbs": [
-      "Overview"
+      "Examples",
+      "Examples"
     ]
   },
   {
-    "objectID": "pages/overview.html#installation",
-    "href": "pages/overview.html#installation",
-    "title": "Overview",
-    "section": "Installation",
-    "text": "Installation\n\npixicondapip\n\n\npixi workspace channel add munch-group\npixi add script-widget\n\n\nconda install -c munch-group script-widget\n\n\npip install script-widget",
+    "objectID": "pages/example.html#a-cells-variables-dont-leak-out",
+    "href": "pages/example.html#a-cells-variables-dont-leak-out",
+    "title": "Examples",
+    "section": "A cell’s variables don’t leak out",
+    "text": "A cell’s variables don’t leak out\n%%exercise runs in a namespace that’s fresh on every invocation, so a name a cell defines is gone once the cell finishes:\n\n%%script\nx = 42\nfor i in range(40):\n    print(i)\nasdf\n\n\n\n\nA later %%exercise cell can’t see it either – referencing x again raises a NameError. %%exercise catches that error and shows it in the box rather than crashing the notebook:\n\n%%script\nx\n\n\n\n\nThe same is true of any exception the cell raises – it’s reported with its full traceback, not propagated to the notebook:\n\n%%script\n1 / 0",
     "crumbs": [
-      "Overview"
+      "Examples",
+      "Examples"
     ]
   },
   {
-    "objectID": "pages/overview.html#basic-use",
-    "href": "pages/overview.html#basic-use",
-    "title": "Overview",
-    "section": "Basic use",
-    "text": "Basic use\nImporting the package registers the magic:\n\nimport script_widget\n\nTag a cell %%exercise and its body runs in isolation. A trailing bare expression is displayed just like a normal notebook cell:\n\n%%exercise\na = 10\nb = 5\na + b\n\n\n\n\nRich display output – including matplotlib figures – is captured too, with no plt.show() needed:\n\n%%exercise\nimport matplotlib.pyplot as plt\nplt.plot([1, 2, 3])",
+    "objectID": "pages/example.html#imports-are-isolated-too",
+    "href": "pages/example.html#imports-are-isolated-too",
+    "title": "Examples",
+    "section": "Imports are isolated too",
+    "text": "Imports are isolated too\nimport matplotlib.pyplot as plt inside the cell doesn’t reach back into the notebook’s own matplotlib session – each %%exercise cell runs in a brand-new subprocess with its own sys.modules, so the import is genuinely fresh. Mutating it – here, the default line width – has no effect outside the cell:\n\n%%script\nimport matplotlib.pyplot as plt\nplt.rcParams['lines.linewidth'] = 5\nplt.plot([1, 3, 2])\n\n\n\n\n\nimport matplotlib.pyplot as plt\nplt.rcParams['lines.linewidth']\n\n1.5",
     "crumbs": [
-      "Overview"
+      "Examples",
+      "Examples"
     ]
   },
   {
-    "objectID": "pages/overview.html#how-it-works",
-    "href": "pages/overview.html#how-it-works",
-    "title": "Overview",
-    "section": "How it works",
-    "text": "How it works\nEach %%exercise cell runs in a namespace built from nothing – not even a copy of the notebook’s own variables. Anything the cell needs (a library, a model, a helper function) must be imported by the cell itself. Because Python caches loaded modules in sys.modules, such an import is essentially free and hands back the exact same live object the notebook already has – the same plt, with the same open figures; the same model, with the same weights.\nrun_exercise() is the engine behind the magic – it returns an ExerciseResult capturing everything the cell produced, which ExerciseOutputWidget then renders.",
+    "objectID": "pages/example.html#stdout-and-stderr",
+    "href": "pages/example.html#stdout-and-stderr",
+    "title": "Examples",
+    "section": "stdout and stderr",
+    "text": "stdout and stderr\nBoth streams are captured and shown separately:\n\n%%script\nimport sys\nprint('to stdout')\nprint('to stderr', file=sys.stderr)",
     "crumbs": [
-      "Overview"
+      "Examples",
+      "Examples"
     ]
   },
   {
-    "objectID": "pages/overview.html#learning-more",
-    "href": "pages/overview.html#learning-more",
-    "title": "Overview",
-    "section": "Learning more",
-    "text": "Learning more\n\nExamples: a longer walkthrough covering isolation, errors, and captured output.\nAPI reference: full reference for run_exercise, ExerciseResult, and the widget.",
+    "objectID": "pages/example.html#learn-more",
+    "href": "pages/example.html#learn-more",
+    "title": "Examples",
+    "section": "Learn more",
+    "text": "Learn more\nSee the Overview for installation and a summary of how %%exercise works, or the API reference for the full reference of run_exercise, ExerciseResult, and the widget.",
     "crumbs": [
-      "Overview"
+      "Examples",
+      "Examples"
     ]
   },
   {
-    "objectID": "api/ExerciseResult.html",
-    "href": "api/ExerciseResult.html",
-    "title": "ExerciseResult",
+    "objectID": "api/index.html",
+    "href": "api/index.html",
+    "title": "Function reference",
     "section": "",
-    "text": "script_widget.executor.ExerciseResult(\n    stdout='',\n    stderr='',\n    outputs=None,\n    error=None,\n    traceback=None,\n)\nThe outcome of running one %%exercise cell.\n\n\n\nstdout : str\n\nEverything the cell printed to stdout.\n\nstderr : str\n\nEverything the cell printed to stderr.\n\noutputs : list of dict\n\nRich display MIME bundles produced by the cell – a trailing bare expression’s repr, an explicit display(...) call, or (when run with a live IPython shell) a matplotlib figure flushed after execution. Each entry maps MIME type to its data, e.g. {\"image/png\": \"&lt;base64&gt;\", \"text/plain\": \"...\"}.\n\nerror : str or None\n\nA short \"ExceptionType: message\" summary if the cell failed to parse or raised while running, else None.\n\ntraceback : str or None\n\nThe full formatted traceback for error, else None.",
+    "text": "The engine behind %%exercise: run a cell body in a fresh, isolated namespace and capture everything it produced.\n\n\n\nrun_exercise\nRun source in a fresh, isolated namespace and capture everything\n\n\nExerciseResult\nThe outcome of running one %%exercise cell.\n\n\n\n\n\n\nThe anywidget-based output widget and the %%exercise cell magic.\n\n\n\nExerciseOutputWidget\nEverything a %%exercise cell produced, rendered in a shaded box.\n\n\nregister_exercise_magic\nRegister the %%exercise cell magic.",
     "crumbs": [
-      "Executor",
-      "ExerciseResult"
+      "Function reference"
     ]
   },
   {
-    "objectID": "api/ExerciseResult.html#attributes",
-    "href": "api/ExerciseResult.html#attributes",
-    "title": "ExerciseResult",
+    "objectID": "api/index.html#executor",
+    "href": "api/index.html#executor",
+    "title": "Function reference",
     "section": "",
-    "text": "stdout : str\n\nEverything the cell printed to stdout.\n\nstderr : str\n\nEverything the cell printed to stderr.\n\noutputs : list of dict\n\nRich display MIME bundles produced by the cell – a trailing bare expression’s repr, an explicit display(...) call, or (when run with a live IPython shell) a matplotlib figure flushed after execution. Each entry maps MIME type to its data, e.g. {\"image/png\": \"&lt;base64&gt;\", \"text/plain\": \"...\"}.\n\nerror : str or None\n\nA short \"ExceptionType: message\" summary if the cell failed to parse or raised while running, else None.\n\ntraceback : str or None\n\nThe full formatted traceback for error, else None.",
+    "text": "The engine behind %%exercise: run a cell body in a fresh, isolated namespace and capture everything it produced.\n\n\n\nrun_exercise\nRun source in a fresh, isolated namespace and capture everything\n\n\nExerciseResult\nThe outcome of running one %%exercise cell.",
     "crumbs": [
-      "Executor",
-      "ExerciseResult"
+      "Function reference"
     ]
   },
   {
-    "objectID": "api/register_exercise_magic.html",
-    "href": "api/register_exercise_magic.html",
-    "title": "register_exercise_magic",
+    "objectID": "api/index.html#widget",
+    "href": "api/index.html#widget",
+    "title": "Function reference",
     "section": "",
-    "text": "register_exercise_magic\nscript_widget.widget.register_exercise_magic(ipython=None)\nRegister the %%exercise cell magic.\nIn IPython/Jupyter, %%exercise runs the cell body in a fresh, isolated namespace (see executor.run_exercise) and displays everything it produced – stdout, stderr, rich output, any exception – in a shaded ExerciseOutputWidget below the cell::\n%%exercise\nimport matplotlib.pyplot as plt\nplt.plot([1, 2, 3])\nNothing the cell defines or imports persists past that one run, and nothing the notebook has already defined is visible to it except through the cell’s own imports.\nCalled automatically on import; returns True when a live shell is found, False otherwise (e.g. plain Python).",
+    "text": "The anywidget-based output widget and the %%exercise cell magic.\n\n\n\nExerciseOutputWidget\nEverything a %%exercise cell produced, rendered in a shaded box.\n\n\nregister_exercise_magic\nRegister the %%exercise cell magic.",
     "crumbs": [
-      "Widget",
-      "register_exercise_magic"
+      "Function reference"
     ]
   },
   {
@@ -149,88 +151,86 @@
     ]
   },
   {
-    "objectID": "api/index.html",
-    "href": "api/index.html",
-    "title": "Function reference",
+    "objectID": "api/ExerciseResult.html",
+    "href": "api/ExerciseResult.html",
+    "title": "ExerciseResult",
     "section": "",
-    "text": "The engine behind %%exercise: run a cell body in a fresh, isolated namespace and capture everything it produced.\n\n\n\nrun_exercise\nRun source in a fresh, isolated namespace and capture everything\n\n\nExerciseResult\nThe outcome of running one %%exercise cell.\n\n\n\n\n\n\nThe anywidget-based output widget and the %%exercise cell magic.\n\n\n\nExerciseOutputWidget\nEverything a %%exercise cell produced, rendered in a shaded box.\n\n\nregister_exercise_magic\nRegister the %%exercise cell magic.",
+    "text": "script_widget.executor.ExerciseResult(\n    stdout='',\n    stderr='',\n    outputs=None,\n    error=None,\n    traceback=None,\n)\nThe outcome of running one %%exercise cell.\n\n\n\nstdout : str\n\nEverything the cell printed to stdout.\n\nstderr : str\n\nEverything the cell printed to stderr.\n\noutputs : list of dict\n\nRich display MIME bundles produced by the cell – a trailing bare expression’s repr, an explicit display(...) call, or (when run with a live IPython shell) a matplotlib figure flushed after execution. Each entry maps MIME type to its data, e.g. {\"image/png\": \"&lt;base64&gt;\", \"text/plain\": \"...\"}.\n\nerror : str or None\n\nA short \"ExceptionType: message\" summary if the cell failed to parse or raised while running, else None.\n\ntraceback : str or None\n\nThe full formatted traceback for error, else None.",
     "crumbs": [
-      "Function reference"
+      "Executor",
+      "ExerciseResult"
     ]
   },
   {
-    "objectID": "api/index.html#executor",
-    "href": "api/index.html#executor",
-    "title": "Function reference",
+    "objectID": "api/ExerciseResult.html#attributes",
+    "href": "api/ExerciseResult.html#attributes",
+    "title": "ExerciseResult",
     "section": "",
-    "text": "The engine behind %%exercise: run a cell body in a fresh, isolated namespace and capture everything it produced.\n\n\n\nrun_exercise\nRun source in a fresh, isolated namespace and capture everything\n\n\nExerciseResult\nThe outcome of running one %%exercise cell.",
+    "text": "stdout : str\n\nEverything the cell printed to stdout.\n\nstderr : str\n\nEverything the cell printed to stderr.\n\noutputs : list of dict\n\nRich display MIME bundles produced by the cell – a trailing bare expression’s repr, an explicit display(...) call, or (when run with a live IPython shell) a matplotlib figure flushed after execution. Each entry maps MIME type to its data, e.g. {\"image/png\": \"&lt;base64&gt;\", \"text/plain\": \"...\"}.\n\nerror : str or None\n\nA short \"ExceptionType: message\" summary if the cell failed to parse or raised while running, else None.\n\ntraceback : str or None\n\nThe full formatted traceback for error, else None.",
     "crumbs": [
-      "Function reference"
+      "Executor",
+      "ExerciseResult"
     ]
   },
   {
-    "objectID": "api/index.html#widget",
-    "href": "api/index.html#widget",
-    "title": "Function reference",
+    "objectID": "api/register_exercise_magic.html",
+    "href": "api/register_exercise_magic.html",
+    "title": "register_exercise_magic",
     "section": "",
-    "text": "The anywidget-based output widget and the %%exercise cell magic.\n\n\n\nExerciseOutputWidget\nEverything a %%exercise cell produced, rendered in a shaded box.\n\n\nregister_exercise_magic\nRegister the %%exercise cell magic.",
+    "text": "register_exercise_magic\nscript_widget.widget.register_exercise_magic(ipython=None)\nRegister the %%exercise cell magic.\nIn IPython/Jupyter, %%exercise runs the cell body in a fresh, isolated namespace (see executor.run_exercise) and displays everything it produced – stdout, stderr, rich output, any exception – in a shaded ExerciseOutputWidget below the cell::\n%%exercise\nimport matplotlib.pyplot as plt\nplt.plot([1, 2, 3])\nNothing the cell defines or imports persists past that one run, and nothing the notebook has already defined is visible to it except through the cell’s own imports.\nCalled automatically on import; returns True when a live shell is found, False otherwise (e.g. plain Python).",
     "crumbs": [
-      "Function reference"
+      "Widget",
+      "register_exercise_magic"
     ]
   },
   {
-    "objectID": "pages/example.html",
-    "href": "pages/example.html",
-    "title": "Examples",
+    "objectID": "pages/overview.html",
+    "href": "pages/overview.html",
+    "title": "Overview",
     "section": "",
-    "text": "A closer look at %%exercise: isolation between cells, how errors are reported, and the sys.modules trick that still lets a cell reach already-imported libraries.\nimport script_widget",
+    "text": "script-widget provides a Jupyter cell magic, %%exercise, that runs a cell’s body in a namespace that’s fresh on every invocation and discarded afterward. Nothing the cell defines or imports persists past that one run, and nothing the notebook has already defined is visible to it – except through the cell’s own import/from ... import statements. Everything the cell produces – stdout, stderr, rich display output, any exception – is shown in a shaded box below the cell instead of the notebook’s normal output area.",
     "crumbs": [
-      "Examples",
-      "Examples"
+      "Overview"
     ]
   },
   {
-    "objectID": "pages/example.html#a-cells-variables-dont-leak-out",
-    "href": "pages/example.html#a-cells-variables-dont-leak-out",
-    "title": "Examples",
-    "section": "A cell’s variables don’t leak out",
-    "text": "A cell’s variables don’t leak out\n%%exercise runs in a namespace that’s fresh on every invocation, so a name a cell defines is gone once the cell finishes:\n\n%%exercise\nx = 42\nprint(x)\npirnt()\n\n\n\n\nA later %%exercise cell can’t see it either – referencing x again raises a NameError. %%exercise catches that error and shows it in the box rather than crashing the notebook:\n\n%%exercise\nx\n\n\n\n\nThe same is true of any exception the cell raises – it’s reported with its full traceback, not propagated to the notebook:\n\n%%exercise\n1 / 0",
+    "objectID": "pages/overview.html#installation",
+    "href": "pages/overview.html#installation",
+    "title": "Overview",
+    "section": "Installation",
+    "text": "Installation\n\npixicondapip\n\n\npixi workspace channel add munch-group\npixi add script-widget\n\n\nconda install -c munch-group script-widget\n\n\npip install script-widget",
     "crumbs": [
-      "Examples",
-      "Examples"
+      "Overview"
     ]
   },
   {
-    "objectID": "pages/example.html#reaching-an-already-imported-library",
-    "href": "pages/example.html#reaching-an-already-imported-library",
-    "title": "Examples",
-    "section": "Reaching an already-imported library",
-    "text": "Reaching an already-imported library\nimport matplotlib.pyplot as plt inside the cell isn’t blocked by the fresh namespace – Python’s sys.modules cache hands back the exact same module object the notebook already has, not a fresh reload. Mutating it – here, the default line width – is visible outside the cell too:\n\n%%exercise\nimport matplotlib.pyplot as plt\nplt.rcParams['lines.linewidth'] = 5\nplt.plot([1, 3, 2])\n\n\n\n\n\nimport matplotlib.pyplot as plt\nplt.rcParams['lines.linewidth']\n\n5.0",
+    "objectID": "pages/overview.html#basic-use",
+    "href": "pages/overview.html#basic-use",
+    "title": "Overview",
+    "section": "Basic use",
+    "text": "Basic use\nImporting the package registers the magic:\n\nimport script_widget\n\nTag a cell %%exercise and its body runs in isolation. A trailing bare expression is displayed just like a normal notebook cell:\n\n%%exercise\na = 10\nb = 5\na + b\n\nNo event loop hook running.\n\n\n\n\n\nRich display output – including matplotlib figures – is captured too, with no plt.show() needed:\n\n%%exercise\nimport matplotlib.pyplot as plt\nplt.plot([1, 2, 3])\n\nNo event loop hook running.",
     "crumbs": [
-      "Examples",
-      "Examples"
+      "Overview"
     ]
   },
   {
-    "objectID": "pages/example.html#stdout-and-stderr",
-    "href": "pages/example.html#stdout-and-stderr",
-    "title": "Examples",
-    "section": "stdout and stderr",
-    "text": "stdout and stderr\nBoth streams are captured and shown separately:\n\n%%exercise\nimport sys\nprint('to stdout')\nprint('to stderr', file=sys.stderr)",
+    "objectID": "pages/overview.html#how-it-works",
+    "href": "pages/overview.html#how-it-works",
+    "title": "Overview",
+    "section": "How it works",
+    "text": "How it works\nEach %%exercise cell runs in a brand-new Python subprocess – not just an empty namespace in the current process, but a fresh interpreter, spawned per cell and discarded afterward. Anything the cell needs (a library, a model, a helper function) must be imported by the cell itself, and that import is genuinely fresh: unlike a plain in-process exec, there’s no sys.modules cache hit handing back the notebook’s own live object, so mutating something like matplotlib’s rcParams inside the cell can’t leak back out to the notebook.\nrun_exercise() is the engine behind the magic – it returns an ExerciseResult capturing everything the cell produced, which ExerciseOutputWidget then renders.",
     "crumbs": [
-      "Examples",
-      "Examples"
+      "Overview"
     ]
   },
   {
-    "objectID": "pages/example.html#learn-more",
-    "href": "pages/example.html#learn-more",
-    "title": "Examples",
-    "section": "Learn more",
-    "text": "Learn more\nSee the Overview for installation and a summary of how %%exercise works, or the API reference for the full reference of run_exercise, ExerciseResult, and the widget.",
+    "objectID": "pages/overview.html#learning-more",
+    "href": "pages/overview.html#learning-more",
+    "title": "Overview",
+    "section": "Learning more",
+    "text": "Learning more\n\nExamples: a longer walkthrough covering isolation, errors, and captured output.\nAPI reference: full reference for run_exercise, ExerciseResult, and the widget.",
     "crumbs": [
-      "Examples",
-      "Examples"
+      "Overview"
     ]
   }
 ]
