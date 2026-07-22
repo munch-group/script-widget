@@ -194,7 +194,7 @@
     "href": "pages/example.html#a-cells-variables-dont-leak-out",
     "title": "Examples",
     "section": "A cell’s variables don’t leak out",
-    "text": "A cell’s variables don’t leak out\n%%exercise runs in a namespace that’s fresh on every invocation, so a name a cell defines is gone once the cell finishes:\n\n%%exercise\nx = 42\nx\n\n\n\n\nA later %%exercise cell can’t see it either – referencing x again raises a NameError. %%exercise catches that error and shows it in the box rather than crashing the notebook:\n\n%%exercise\nx\n\n\n\n\nThe same is true of any exception the cell raises – it’s reported with its full traceback, not propagated to the notebook:\n\n%%exercise\n1 / 0",
+    "text": "A cell’s variables don’t leak out\n%%exercise runs in a namespace that’s fresh on every invocation, so a name a cell defines is gone once the cell finishes:\n\n%%exercise\nx = 42\nprint(x)\npirnt()\n\n\n\n\nA later %%exercise cell can’t see it either – referencing x again raises a NameError. %%exercise catches that error and shows it in the box rather than crashing the notebook:\n\n%%exercise\nx\n\n\n\n\nThe same is true of any exception the cell raises – it’s reported with its full traceback, not propagated to the notebook:\n\n%%exercise\n1 / 0",
     "crumbs": [
       "Examples",
       "Examples"
