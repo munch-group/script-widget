@@ -4,23 +4,22 @@ This file provides guidance to Claude Code (claude.ai/code) when working
 with code in this repository.
 
 Project context for `script-widget` -- a Jupyter cell magic that runs a cell
-in a fresh, isolated namespace, built on
+in a fresh, fully isolated subprocess, built on
 [anywidget](https://anywidget.dev).
 
 ## What this is
 
-Tag a cell `%%exercise` and its body runs in a namespace that is fresh on
-every invocation and discarded afterward -- nothing the cell defines or
-imports persists past that one run, and nothing the notebook has already
-defined is visible to it *except* through the cell's own
-`import`/`from ... import` statements. Because Python caches loaded modules
-in `sys.modules`, such an import is essentially free and hands back the
-exact same live object the notebook already has (the same `plt`, with the
-same open figures; the same model, with the same weights) -- nothing is
-reloaded, reinitialized, or (fully) restarted. Everything the cell produced
--- stdout, stderr, rich display output, any exception -- is shown in a
-shaded `ExerciseOutputWidget` box below the cell instead of the notebook's
-normal (unstyled) output area.
+Tag a cell `%%exercise` and its body runs in a brand-new Python interpreter
+process, spawned fresh and discarded after exactly one run -- nothing the
+cell defines, imports, or mutates persists past that one run, and nothing
+the notebook has already defined or imported is visible to it at all, not
+even via a `sys.modules` cache hit: `import matplotlib.pyplot as plt`
+inside the cell gets a genuinely fresh module, not the notebook's own live
+object, so a mutation like `plt.rcParams['lines.linewidth'] = 5` inside the
+cell can never leak back out. Everything the cell produced -- stdout,
+stderr, rich display output, any exception -- is shown in a shaded
+`ExerciseOutputWidget` box below the cell instead of the notebook's normal
+(unstyled) output area.
 
 The repo was scaffolded from the `munch-group` Python-library template
 (pixi environment, quartodoc docs, conda/PyPI release automation) -- the
@@ -41,28 +40,35 @@ GitHub URLs -- out of scope for a magic-name change alone).
 
 The package is `script_widget` under `src/`:
 
-- `src/script_widget/executor.py` -- the engine. `run_exercise(source,
-  ip=None)` `ast.parse`s the cell body, execs every statement but the last
-  in a **fresh, empty namespace** (no snapshot of the notebook's `user_ns`
-  at all -- see "Architecture" below for why), then handles the last
-  statement like a real notebook cell: a bare expression's value gets
-  displayed, an assignment still runs but produces no output. With a live
-  `ip`, capture goes through `IPython.utils.capture.capture_output` (stdout,
+- `src/script_widget/executor.py` -- the engine. `run_exercise(source)`
+  spawns a subprocess (`multiprocessing.get_context("spawn")`, one
+  disposable process per call, never reused -- see "Architecture" below
+  for why not `fork`) and hands it off to `_child_main`, which runs
+  entirely *inside* that subprocess: `ast.parse`s the cell body, execs
+  every statement but the last in a fresh, empty namespace, then handles
+  the last statement like a real notebook cell (a bare expression's value
+  gets displayed, an assignment still runs but produces no output), via
+  `_run_with_ipython` against a throwaway IPython shell the subprocess
+  builds for itself (`_make_headless_shell`, same `IPython.testing.
+  globalipapp` mechanism the test suite uses for headless testing).
+  Capture goes through `IPython.utils.capture.capture_output` (stdout,
   stderr, and rich display output all at once) and `ip.events.trigger(
-  "post_execute")` is called after running so any matplotlib-inline flush
-  hook fires exactly as it would after a normal cell. Without `ip` (plain
-  `pytest`), only stdout/stderr are captured via `contextlib.redirect_*`
-  and the trailing value (if any) is reported as a `text/plain` output.
-  Returns an `ExerciseResult(stdout, stderr, outputs, error, traceback)` --
-  never raises; a `SyntaxError` or any runtime exception is caught and
-  reported via `.error`/`.traceback`. With a live `ip`, `.traceback` comes
-  from `ip.InteractiveTB.structured_traceback()`/`.stb2text()` (the same
-  machinery IPython itself uses to print an uncaught exception), so it
-  carries the same ANSI color codes a normal notebook traceback would --
-  see "Colored tracebacks" under Architecture.
+  "post_execute")` is called after running so the subprocess's own
+  `%matplotlib inline` flush hook fires exactly as it would after a normal
+  cell. The result -- an `ExerciseResult(stdout, stderr, outputs, error,
+  traceback)` -- is sent back to the parent process over a
+  `multiprocessing.Pipe`; `run_exercise` never raises, whether the cell hit
+  a `SyntaxError`, a runtime exception (reported via `.error`/`.traceback`,
+  with `.traceback` from `ip.InteractiveTB.structured_traceback()`/
+  `.stb2text()` -- see "Colored tracebacks" under Architecture), or the
+  subprocess dying outright (reported as a generic `.error` with the
+  child's exit code).
 - `src/script_widget/widget.py` -- `ExerciseOutputWidget` (the
   `anywidget.AnyWidget`) + the embedded `_ESM`/`_CSS` frontend strings +
-  `register_exercise_magic()`. The widget's traits are copied from an
+  `register_exercise_magic()`, which registers both `%%exercise` (the
+  canonical name) and `%%script` (a plain alias -- same handler function
+  registered under a second `magic_name`, not a separate implementation).
+  The widget's traits are copied from an
   `ExerciseResult` once at construction and never change afterward (unlike
   `puzzle_widget.PuzzleWidget`, there's no interactive re-checking), so the
   frontend's `render()` draws once from the model's initial state with no
@@ -76,10 +82,11 @@ The package is `script_widget` under `src/`:
   `run_exercise`/`ExerciseOutputWidget`/`register_exercise_magic` from
   `executor.py`/`widget.py`. Importing `script_widget` therefore both
   exposes the public API and registers the cell magic as a side effect.
-- `test/` -- headless pytest suite: `test_executor.py` (the engine, split
-  into a no-shell fallback-path section and an `IPython.testing.globalipapp`
-  section for the `capture_output`/`post_execute` paths that genuinely need
-  a live shell), `test_widget.py` (`ExerciseOutputWidget` + the magic --
+- `test/` -- headless pytest suite: `test_executor.py` (the engine -- every
+  test spawns a real subprocess now, so there's no more no-shell/with-shell
+  split; each `run_exercise` call pays real process-startup latency, which
+  is why the suite got noticeably slower after the subprocess-isolation
+  redesign), `test_widget.py` (`ExerciseOutputWidget` + the magic --
   registration wiring is tested against a hand-rolled fake shell, not a
   real one, to stay deterministic and isolated from other tests' IPython
   singleton state), `test_frontend.py` (`node --check` on the extracted
@@ -95,27 +102,48 @@ The package is `script_widget` under `src/`:
 
 ## Architecture
 
-### Why a fresh namespace, not a snapshot of the notebook's
+### Why a subprocess, not just a fresh namespace
 
-An earlier design considered `exec`-ing against `dict(ip.user_ns)` (a
-shallow copy of the notebook's namespace) so a cell could read *any*
-already-defined name, not just imports. That was deliberately dropped in
-favor of a genuinely empty namespace: it makes each `%%exercise` cell
-self-contained and reproducible -- what a cell depends on is visible at the
-top of the cell (its own imports), not implicit in whatever the notebook
-happens to have accumulated by the time it runs. The tradeoff is real and
-intentional: a plain notebook variable with no import path (a dataframe
-built inline, a model trained ad hoc and only ever bound to a local name)
-is **not** visible to `%%exercise`, full stop -- there is no fallback.
+An earlier design ran the cell in a fresh, empty *namespace* but in the
+**same process** as the notebook kernel. That gave reproducibility (a cell
+can't read some already-defined notebook variable it didn't import) but
+not real isolation: Python caches loaded modules in `sys.modules`
+process-wide, so `import matplotlib.pyplot as plt` inside the cell was a
+cache hit handing back the exact same live module object the notebook
+already had -- meaning `plt.rcParams['lines.linewidth'] = 5` inside
+`%%exercise` silently mutated the notebook's own matplotlib state too. That
+was a real, reported problem (a cell described as "isolated" wasn't, for
+anything reachable through an already-imported module), and there's no way
+to fix it while staying in-process: `sys.modules` is inherently one cache
+per interpreter, not per namespace, and even `importlib.reload()` replaces
+a module *in place* (same object identity, still visible everywhere).
+Genuinely fresh imports require a genuinely fresh interpreter -- hence
+`run_exercise` now spawns a real subprocess per cell (see "Package layout"
+above) instead of merely `exec`-ing into an empty dict.
 
-What still reads as "the isolated cell has access to already-imported
-libraries/models" is Python's own `sys.modules` cache: `import matplotlib.
-pyplot as plt` inside the cell doesn't re-run matplotlib's setup or lose
-any state -- it's a cache hit that hands back the identical module object
-the notebook already imported. `test_executor.py::
-test_import_inside_the_cell_returns_the_same_live_module` pins this down
-directly (mutate an attribute on a module via a re-import inside
-`run_exercise`, assert the mutation is visible on the original object).
+Two rejected alternatives, and why: bypassing `sys.modules` for the cell's
+own imports without a new process was considered and dropped -- libraries
+like numpy/matplotlib/pandas/torch keep process-wide global C-level state
+and often aren't safe to load a second time in the same interpreter (real
+risk of crashes or silent misbehavior for exactly the libraries most likely
+to appear in an exercise cell). Forking the live kernel process (`os.fork()`
+or `multiprocessing`'s default `fork` start method on Linux) was also
+dropped: forking a process with live background threads (which a running
+Jupyter kernel always has -- zmq's io threads, heartbeat, etc.) is a
+well-documented hazard that can leave the child in a half-broken state or
+destabilize the parent kernel. `run_exercise` explicitly uses
+`multiprocessing.get_context("spawn")` -- always a brand-new interpreter
+booted from scratch, never a copy-on-write fork of the live kernel -- which
+is slower per cell (a fresh interpreter, plus re-importing whatever the
+cell needs, from under a second to a couple of seconds for heavy libraries)
+but is the only one of the three options that's actually safe.
+
+The tradeoff that *is* still real and intentional, same as before: a plain
+notebook variable with no import path (a dataframe built inline, a model
+trained ad hoc and only ever bound to a local name) is **not** visible to
+`%%exercise`, full stop -- there is no fallback, and now not even an
+already-imported *module* is shared, since the subprocess has its own
+`sys.modules` from the moment it boots.
 
 ### The matplotlib-figure-flush trick
 
@@ -124,43 +152,120 @@ calls and the trailing expression's auto-display, but **not** a bare
 `plt.plot(...)` with no `.show()`/`display()` call -- that auto-flush
 normally happens via a `post_execute` hook the inline backend registers on
 the shell, which never fires for a bare `exec()` call outside `ip.
-run_cell`. `run_exercise` calls `ip.events.trigger("post_execute")` itself,
-still inside the `capture_output` block, right after running the cell --
-this reuses whatever hook the notebook's own `%matplotlib inline` already
-registered (a no-op if inline mode isn't active, matching normal notebook
-behavior in that case too). It's called in a `finally`, so a figure drawn
-before an exception still gets flushed and shown, exactly like a real cell.
+run_cell`. `_run_with_ipython` calls `ip.events.trigger("post_execute")`
+itself, still inside the `capture_output` block, right after running the
+cell -- this fires whatever hook `_make_headless_shell`'s own
+`%matplotlib inline` call just registered *in the subprocess*, not
+anything belonging to the notebook's own matplotlib session (there isn't
+one shared with the subprocess to reuse). It's called in a `finally`, so a
+figure drawn before an exception still gets flushed and shown, exactly
+like a real cell -- but note the figure renders with a pristine default
+backend/rcParams, not whatever runtime configuration the notebook's own
+matplotlib session happens to be carrying.
 
-### Colored tracebacks
+### Colored tracebacks that show the cell's own source
 
-A `%%exercise` traceback is meant to look like a normal uncaught-exception
-display, not a plain `traceback.format_exc()` dump. The backend gets this
-for free by reusing IPython's own formatter rather than reimplementing it:
-`ip.InteractiveTB.structured_traceback(*sys.exc_info())` +
+A `%%exercise` traceback is meant to look exactly like what a student would
+see running the same code as a plain script or in a real notebook cell --
+not a plain `traceback.format_exc()` dump, and not cluttered with
+`script_widget`'s own internal frames. Three things make that true:
+
+- **`_make_headless_shell` forces `shell.colors = "neutral"`.** Without
+  this, there are no ANSI codes to highlight in the first place --
+  `IPython.testing.globalipapp`'s shell is a `TerminalInteractiveShell`,
+  which (reasonably, for a *real* terminal) auto-detects "nocolor" when
+  there's no tty, exactly the case in a subprocess with no real terminal
+  attached. A real Jupyter kernel's shell (`ZMQInteractiveShell`) doesn't do
+  that detection -- it defaults to "neutral" (color on) unconditionally,
+  since its frontend always renders ANSI regardless of ttys -- so this line
+  is what makes the subprocess's shell match a real kernel's default
+  instead of silently downgrading to plain text.
+  `test_traceback_carries_ansi_color_codes` catches a regression here.
+- **The cell's source is registered with `linecache` before it's compiled.**
+  `_run_with_ipython` calls `ip.compile.cache(source)` -- the exact
+  mechanism a real notebook cell uses on itself -- to get a filename (like
+  `<ipython-input-0-...>`) that's already wired into `linecache`, and
+  compiles the cell under *that* filename instead of a bare synthetic one
+  like `"<exercise>"`. Skip this and a traceback frame has no source
+  `structured_traceback` can look up: it renders as a bare `File
+  "<exercise>", line N` with no code shown beneath it at all -- not merely
+  uncolored, genuinely blank, since there's nothing there to highlight.
+- **`tb_offset=2` strips `script_widget`'s own frames.** The call chain
+  between "where the `try` lives" and "the cell's own code" is exactly two
+  functions deep (`_run_with_ipython` -> `_last_line_value`, both frames
+  showing up in `sys.exc_info()`'s traceback if left alone) --
+  `ip.InteractiveTB.structured_traceback(*sys.exc_info(), tb_offset=2)`
+  drops exactly those two, same idea as `InteractiveShell` itself passing
+  `tb_offset=1` to drop its own one wrapper frame (`init_traceback_handlers`'s
+  comment: "we always want to remove the topmost item in the traceback,
+  which is our own internal code"). Get this number wrong and either an
+  executor.py frame leaks into what the student sees, or (overshoot) the
+  outermost frame of their *own* code gets silently eaten too --
+  `test_traceback_does_not_leak_internal_executor_frames` pins both ends
+  down (asserts neither `_last_line_value` nor `executor.py` appear, and
+  that the cell's own lines still do).
+
+With all three in place, `ip.InteractiveTB.structured_traceback(...)` +
 `.stb2text(...)` -- exactly the call `InteractiveShell` itself makes before
-printing an exception -- which returns text with real ANSI SGR escape
-codes (IPython 9's traceback formatter is pygments-based, so source-context
-lines carry full syntax highlighting via 256-color codes, not just the 16
-basic ones used for the exception header/filename/line number). The
-frontend has no ANSI-rendering library to lean on (`_ESM` is dependency-free
-by design), so `widget.py`'s `_ESM` embeds a small SGR-code interpreter
+printing an exception, run against the subprocess's own throwaway shell
+(`_make_headless_shell`) -- returns text with real ANSI SGR escape codes
+(IPython 9's traceback formatter is pygments-based, so source-context lines
+carry full syntax highlighting via 256-color codes, not just the 16 basic
+ones used for the exception header/filename/line number). The frontend has
+no ANSI-rendering library to lean on (`_ESM` is dependency-free by design),
+so `widget.py`'s `_ESM` embeds a small SGR-code interpreter
 (`ansiToHtml`/`applySGR`/`xterm256`) that turns those escape codes into
 colored `<span>`s, using the exact hex values JupyterLab itself uses for
 `.ansi-*-fg` so the result matches a real notebook's palette. Text with no
-escape codes at all (the no-`ip` fallback path's plain
-`traceback.format_exc()`) round-trips through the same function as a single
-unstyled text node.
+escape codes at all (a plain-text `SyntaxError`, caught in `_child_main`
+before the subprocess's shell -- and hence its `ip.compile.cache` -- is
+even built) round-trips through the same function as a single unstyled
+text node.
 
 ## Gotchas
 
-- **Mutating a shared object via an import IS visible outside the cell.**
-  The isolation is about name *bindings* in the exec namespace, not deep
-  object identity -- `plt.rcParams[...] = ...` inside `%%exercise` really
-  does persist, because `plt` is the same cached module object both inside
-  and outside the cell. This is required for the feature to be useful (a
-  figure drawn inside `%%exercise` needs to use the real matplotlib state)
-  but is the *only* channel by which a cell can affect anything outside
-  itself.
+- **Every `%%exercise` run costs a real process spawn now.** Since the
+  subprocess-isolation redesign, `run_exercise` always pays interpreter
+  startup + re-importing whatever the cell needs (and IPython itself,
+  inside `_make_headless_shell`) -- noticeably slower than the old
+  in-process `exec`, and the whole reason `pixi run test` got much slower
+  too (every `test_executor.py` test spawns one). This is the accepted
+  cost of genuine isolation, not a bug to "optimize away" by reintroducing
+  a shared/reused process.
+- **`multiprocessing.get_context("spawn")` is deliberate -- don't switch to
+  the default context or to `fork`.** The default start method is `fork`
+  on Linux; forking a live, multi-threaded Jupyter kernel process is a
+  known way to corrupt or hang it (see "Why a subprocess" under
+  Architecture). Always go through the explicit `spawn` context.
+- **A matplotlib figure drawn inside `%%exercise` uses a pristine
+  backend/rcParams, not the notebook's own.** The subprocess calls
+  `%matplotlib inline` on its own throwaway shell; it has no access to
+  whatever the notebook's actual matplotlib session has been configured to
+  at runtime (custom rcParams set earlier in the notebook, a non-default
+  backend, etc.) -- only whatever `matplotlibrc`-style config loads fresh
+  from disk.
+- **A subprocess that dies outright is still reported, not left hanging.**
+  `_run_isolated` treats `EOFError` from `parent_conn.recv()` (the child
+  closed its pipe end without sending anything -- crashed, killed, etc.)
+  as a normal failure mode: it returns an `ExerciseResult` with a generic
+  `.error` naming the child's exit code, same contract as a caught
+  exception (`run_exercise` still never raises).
+- **`multiprocessing.Process` inherits the subprocess's stdout/stderr fds
+  -- it doesn't pipe them.** Anything printed *outside* the
+  `capture_output()` block in `_run_with_ipython` goes straight to the
+  real kernel's stdout, bypassing `ExerciseResult` entirely: it won't show
+  up in the widget's own output box, and (worse, since it's an
+  unpredictable race against the kernel's iopub message flushing) it can
+  show up oddly delayed, attached to whatever cell happens to be executing
+  when it's finally flushed -- not necessarily the `%%exercise` cell that
+  produced it. `_make_headless_shell`'s own `%matplotlib inline` setup call
+  hits this: it unconditionally prints "No event loop hook running." (inline
+  figures need no real GUI event loop, but `enable_gui` prints that
+  regardless), so it's wrapped in its own `contextlib.redirect_stdout`
+  right there, rather than relying on the later `capture_output()` block to
+  catch it. `test_matplotlib_setup_does_not_leak_to_real_stdout` (using
+  pytest's `capfd`, which -- unlike `capsys` -- catches file-descriptor
+  -level writes from a real subprocess) guards this.
 - **No IPython input transforms inside the cell body.** `%%exercise` parses
   with plain `ast.parse`/`exec`, not `ip.run_cell`, so line magics
   (`%time`), shell escapes (`!ls`), and `?`-help don't work inside the cell
@@ -170,16 +275,10 @@ unstyled text node.
   real terminal) sets `display_formatter.active_types = ["text/plain"]`,
   which silently drops `image/png` etc. even though the matplotlib-inline
   formatter is registered and would produce real PNG bytes if called
-  directly. `test_executor.py`'s `ip` fixture explicitly widens
-  `active_types` back to `format_types` so the test shell behaves like a
-  real Jupyter kernel -- forget this and figure-capture tests fail with
-  only a `text/plain` repr of the `Figure` object, not a missing output.
-- **A live IPython shell is process-global, not per-test.** `IPython.
-  get_ipython()` returns whatever `IPython.testing.globalipapp.get_ipython()`
-  registered anywhere earlier in the same pytest process -- so a test that
-  wants to verify the *absence* of a shell (`register_exercise_magic(
-  ipython=None)` should return `False`) can't rely on ambient state; it
-  must monkeypatch `script_widget.widget.get_ipython` directly instead.
+  directly. `_make_headless_shell` explicitly widens `active_types` back
+  to `format_types` for exactly this reason -- forget this (e.g. if this
+  function gets refactored) and figure capture silently degrades to a
+  `text/plain` repr of the `Figure` object, not a missing output.
 - **The package/magic name mismatch is intentional, not a leftover.** The
   package stays `script_widget`; the magic is `%%exercise`. Don't "fix"
   this by renaming the package -- that's a separate, deliberately-deferred
@@ -235,16 +334,19 @@ Python wheel to PyPI, mirroring `puzzle-widget`'s setup.
 
 ## Testing approach
 
-- `executor.run_exercise` is split into a no-shell fallback path (pure
-  stdlib -- `ast`, `contextlib`, `traceback`) tested without any IPython
-  dependency, and an `IPython.testing.globalipapp`-backed section for the
-  `capture_output`/`post_execute` paths that genuinely need a live shell
-  (rich `display()` capture, matplotlib figure flush, flush-on-exception).
+- `executor.run_exercise` tests all go through the same real-subprocess
+  path now (no more no-shell/with-shell split) -- `test_executor.py`
+  exercises stdout/stderr capture, the trailing-expression/`display()`
+  paths, matplotlib figure flush (including flush-on-exception), and the
+  isolation guarantee itself (mutating a freshly-imported matplotlib's
+  `rcParams` inside the cell must not affect the test process's own
+  already-imported copy). Each test pays real process-spawn latency --
+  this is why the suite is seconds, not milliseconds, and that's expected.
 - `ExerciseOutputWidget` is tested by constructing it directly from an
-  `ExerciseResult` -- no magic/IPython involved.
+  `ExerciseResult` -- no magic/subprocess involved.
 - `register_exercise_magic`'s registration wiring is tested against a
   hand-rolled fake shell rather than a real `InteractiveShell`, to stay
-  deterministic regardless of other tests' global IPython singleton state.
+  deterministic and avoid spawning anything.
 - The actual shaded-box rendering isn't (and can't be, headlessly)
   exercised by the pytest suite -- `test_frontend.py` only checks the
   extracted `_ESM` parses as valid JS. Manually verify the rendered output

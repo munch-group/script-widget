@@ -11,11 +11,12 @@ instead of the notebook's normal (unstyled) output area.
   Colab.
 * All execution/capture logic lives in ``executor.py``; this module only
   wraps the result in a synced-traitlets widget and wires up the
-  ``%%exercise`` cell magic.
+  ``%%exercise`` cell magic (``%%script`` is a plain alias for the same
+  magic -- see ``register_exercise_magic``).
 
 Usage
 -----
-    import script_widget  # registers the %%exercise cell magic
+    import script_widget  # registers the %%exercise cell magic (and %%script)
 
     %%exercise
     import matplotlib.pyplot as plt
@@ -212,6 +213,11 @@ function render({ model, el }){
   const root = document.createElement("div");
   root.className = "sw-root";
 
+  const header = document.createElement("div");
+  header.className = "sw-header";
+  header.textContent = "Terminal output:";
+  root.appendChild(header);
+
   // Everything the cell produced lives in one continuous white panel --
   // nesting it inside the gray .sw-root "mat" this way (rather than laying
   // stdout/stderr/outputs/traceback directly on the gray background) means
@@ -220,12 +226,16 @@ function render({ model, el }){
   body.className = "sw-body";
   root.appendChild(body);
 
+  let outputPre = null;
   const output = [model.get("stdout"), model.get("stderr")].filter(Boolean).join("\n");
   if (output){
-    const pre = document.createElement("pre");
-    pre.className = "sw-output";
-    pre.appendChild(ansiToHtml(output));
-    body.appendChild(pre);
+    const wrap = document.createElement("div");
+    wrap.className = "sw-output-wrap";
+    outputPre = document.createElement("pre");
+    outputPre.className = "sw-output";
+    outputPre.appendChild(ansiToHtml(output));
+    wrap.appendChild(outputPre);
+    body.appendChild(wrap);
   }
 
   (model.get("outputs") || []).forEach((data) => {
@@ -242,6 +252,33 @@ function render({ model, el }){
   }
 
   el.appendChild(root);
+
+  // A native scrollbar's own "there's more" affordance turns out to be
+  // unreliable across notebook frontends (some force an auto-hiding overlay
+  // scrollbar no CSS override changes), so signal truncation ourselves: once
+  // the box is actually laid out (double rAF, since a widget's element isn't
+  // always attached to the visible document yet at the point render() runs),
+  // check whether it really overflows and, if so, add a "scroll to see
+  // more" badge that tracks scroll position -- hidden once the user has
+  // actually scrolled down to the last line, so it never claims there's more
+  // when there isn't.
+  if (outputPre){
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      if (outputPre.scrollHeight > outputPre.clientHeight + 1){
+        const badge = document.createElement("div");
+        badge.className = "sw-more";
+        badge.textContent = "scroll to see more";
+        outputPre.parentElement.appendChild(badge);
+
+        const updateBadge = () => {
+          const atBottom = outputPre.scrollTop + outputPre.clientHeight >= outputPre.scrollHeight - 1;
+          badge.style.display = atBottom ? "none" : "";
+        };
+        outputPre.addEventListener("scroll", updateBadge);
+        updateBadge();
+      }
+    }));
+  }
 }
 
 export default { render };
@@ -249,24 +286,45 @@ export default { render };
 
 _CSS = r"""
 /* Styles for the DOM built in _ESM's render(): a plain gray "mat" (.sw-root,
-   no left accent, no success/failure color change) around one continuous
-   white panel (.sw-body) holding everything the cell produced -- combined
-   stdout+stderr (.sw-output), any rendered outputs (.sw-image/.sw-svg/
-   .sw-html/.sw-text), and .sw-traceback -- stacked with plain margin so no
-   gray ever shows between them. */
-.sw-root { width: 100%; box-sizing: border-box;
+   bordered on all four edges, no success/failure color change), a small
+   "Terminal output:" label (.sw-header) sitting directly on that gray
+   background, then one continuous white panel (.sw-body) holding
+   everything the cell produced -- combined stdout+stderr (.sw-output), any
+   rendered outputs (.sw-image/.sw-svg/.sw-html/.sw-text), and
+   .sw-traceback -- stacked with plain margin so no gray ever shows between
+   them. margin-top on .sw-root separates the box from the code cell above
+   it. */
+.sw-root { width: 100%; box-sizing: border-box; margin-top: 8px;
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
   background: #f3f4f6; border-radius: 6px; padding: 8px;
-  border-left: 1px solid #9ca3af; border-right: 1px solid #9ca3af;
-  border-bottom: 1px solid #9ca3af; }
+  border: 1px solid #9ca3af; }
+.sw-header { font-size: 11.5px; font-weight: 600; letter-spacing: .02em;
+  color: #6b7280; text-transform: uppercase; margin: 2px 4px 6px; }
 .sw-body { background: #ffffff; border-radius: 4px; padding: 10px 14px; }
 .sw-body > * + * { margin-top: 8px; }
 .sw-output, .sw-text, .sw-traceback {
   margin: 0;
   font-family: ui-monospace, SFMono-Regular, "Cascadia Code", Menlo, monospace;
-  font-size: 12.5px; white-space: pre-wrap; word-break: break-word; color: #24292f; }
+  font-size: 12.5px; line-height: 18px; white-space: pre-wrap;
+  word-break: break-word; color: #24292f; }
+.sw-output { max-height: 540px; overflow-y: auto; }
 .sw-image { max-width: 100%; border-radius: 4px; }
 .sw-html, .sw-svg { border-radius: 4px; overflow-x: auto; }
+/* A custom "scroll to see more" badge -- not a native-scrollbar restyle,
+   which some notebook frontends override with their own auto-hiding
+   scrollbar regardless of CSS -- so truncated output still visibly signals
+   there's more beneath the fold. Positioned over (not inside) the
+   scrollable .sw-output, so it can't itself scroll out of view; hidden via
+   inline style once a scroll listener (in _ESM) detects the user has
+   actually reached the bottom. */
+.sw-output-wrap { position: relative; }
+.sw-more {
+  position: absolute; right: 6px; bottom: 6px;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 10px; font-weight: 700; letter-spacing: .02em;
+  color: #ffffff; background: rgba(107, 114, 128, 0.85);
+  padding: 2px 8px; border-radius: 999px; white-space: nowrap;
+  pointer-events: none; }
 """
 
 
@@ -325,10 +383,10 @@ class ExerciseOutputWidget(anywidget.AnyWidget):
 
 
 def register_exercise_magic(ipython=None):
-    r"""Register the `%%exercise` cell magic.
+    r"""Register the `%%exercise` cell magic (and its `%%script` alias).
 
-    In IPython/Jupyter, `%%exercise` runs the cell body in a fresh, isolated
-    namespace (see ``executor.run_exercise``) and displays everything it
+    In IPython/Jupyter, `%%exercise` runs the cell body in a fresh
+    subprocess (see ``executor.run_exercise``) and displays everything it
     produced -- stdout, stderr, rich output, any exception -- in a shaded
     ``ExerciseOutputWidget`` below the cell::
 
@@ -336,9 +394,14 @@ def register_exercise_magic(ipython=None):
         import matplotlib.pyplot as plt
         plt.plot([1, 2, 3])
 
-    Nothing the cell defines or imports persists past that one run, and
-    nothing the notebook has already defined is visible to it except
-    through the cell's own imports.
+    `%%script` runs the exact same handler under a second name -- both are
+    registered from the same function, so there's no separate
+    implementation to keep in sync.
+
+    Nothing the cell defines, imports, or mutates persists past that one
+    run, and nothing the notebook has already defined or imported is
+    visible to it at all -- not even via a ``sys.modules`` cache hit, since
+    the cell runs in its own interpreter process.
 
     Called automatically on import; returns True when a live shell is
     found, False otherwise (e.g. plain Python).
@@ -348,10 +411,11 @@ def register_exercise_magic(ipython=None):
         return False
 
     def exercise(line, cell):
-        result = run_exercise(cell or "", ip=ip)
+        result = run_exercise(cell or "")
         _ipy_display(ExerciseOutputWidget(result))
 
     ip.register_magic_function(exercise, magic_kind="cell", magic_name="exercise")
+    ip.register_magic_function(exercise, magic_kind="cell", magic_name="script")
     return True
 
 

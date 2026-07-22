@@ -27,10 +27,11 @@ def test_widget_copies_a_failed_result():
 def test_register_exercise_magic_without_a_live_shell_returns_false(monkeypatch):
     # `register_exercise_magic` falls back to the global `get_ipython()` when
     # `ipython` isn't given, same as puzzle_widget's `register_puzzle_magic`.
-    # Patch that lookup directly rather than relying on no other test in this
-    # process having registered a live shell first (test_executor.py's `ip`
-    # fixture does exactly that via IPython.testing.globalipapp) -- otherwise
-    # this test's result depends on test execution order.
+    # Patch that lookup directly rather than relying on ambient global state
+    # (nothing in this process registers a live IPython singleton anymore --
+    # run_exercise's own throwaway shell now lives in a subprocess -- but
+    # asserting on a real function result shouldn't depend on that happening
+    # to stay true either).
     from script_widget import widget as widget_module
 
     monkeypatch.setattr(widget_module, "get_ipython", lambda: None)
@@ -56,3 +57,11 @@ def test_register_exercise_magic_registers_the_cell_magic():
     shell = _FakeShell(cell_magics={})
     assert register_exercise_magic(ipython=shell) is True
     assert shell.magics_manager.magics["cell"]["exercise"].__name__ == "exercise"
+
+
+def test_script_is_a_plain_alias_for_exercise():
+    # %%script isn't a separate implementation -- it's the exact same
+    # handler function registered under a second name.
+    shell = _FakeShell(cell_magics={})
+    register_exercise_magic(ipython=shell)
+    assert shell.magics_manager.magics["cell"]["script"] is shell.magics_manager.magics["cell"]["exercise"]
