@@ -54,6 +54,98 @@ function esc(s){
   return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 }
 
+/** The 16 base ANSI colors, using the exact hex values JupyterLab itself
+ *  uses for `.ansi-*-fg` (see its bundled `.jp-RenderedText pre .ansi-*-fg`
+ *  rules) -- so a traceback rendered here matches a normal notebook's. */
+const ANSI_16 = [
+  "#3e424d", "#e75c58", "#00a250", "#ddb62b", "#208ffb", "#d160c4", "#60c6c8", "#c5c1b4",
+  "#282c36", "#b22b31", "#007427", "#b27d12", "#0065ca", "#a03196", "#258f8f", "#a1a6b2",
+];
+
+function rgbToHex(r, g, b){
+  return "#" + [r, g, b].map((v) => v.toString(16).padStart(2, "0")).join("");
+}
+
+/** Standard xterm 256-color palette lookup: 0-15 are the base ANSI colors,
+ *  16-231 a 6x6x6 RGB cube, 232-255 a grayscale ramp. IPython 9's traceback
+ *  formatter (pygments' Terminal256Formatter) uses this for syntax
+ *  highlighting the source-code context lines, not just the 16 base colors
+ *  used for structural bits (filenames, line numbers, the exception name). */
+function xterm256(n){
+  if (n < 16) return ANSI_16[n];
+  if (n < 232){
+    n -= 16;
+    const levels = [0, 95, 135, 175, 215, 255];
+    const r = Math.floor(n / 36), g = Math.floor((n % 36) / 6), b = n % 6;
+    return rgbToHex(levels[r], levels[g], levels[b]);
+  }
+  const gray = 8 + (n - 232) * 10;
+  return rgbToHex(gray, gray, gray);
+}
+
+/** Apply one escape sequence's `;`-separated SGR params to a running style
+ *  state, consuming the extra params `38`/`48` (extended color) take. */
+function applySGR(state, codes){
+  for (let i = 0; i < codes.length; i++){
+    const code = codes[i];
+    if (code === 0){ state.fg = null; state.bg = null; state.bold = false; state.italic = false; state.underline = false; }
+    else if (code === 1){ state.bold = true; }
+    else if (code === 22){ state.bold = false; }
+    else if (code === 3){ state.italic = true; }
+    else if (code === 23){ state.italic = false; }
+    else if (code === 4){ state.underline = true; }
+    else if (code === 24){ state.underline = false; }
+    else if (code === 39){ state.fg = null; }
+    else if (code === 49){ state.bg = null; }
+    else if (code >= 30 && code <= 37){ state.fg = ANSI_16[code - 30]; }
+    else if (code >= 90 && code <= 97){ state.fg = ANSI_16[8 + code - 90]; }
+    else if (code >= 40 && code <= 47){ state.bg = ANSI_16[code - 40]; }
+    else if (code >= 100 && code <= 107){ state.bg = ANSI_16[8 + code - 100]; }
+    else if (code === 38 || code === 48){
+      const mode = codes[i + 1];
+      let color = null;
+      if (mode === 5){ color = xterm256(codes[i + 2]); i += 2; }
+      else if (mode === 2){ color = rgbToHex(codes[i + 2], codes[i + 3], codes[i + 4]); i += 4; }
+      if (code === 38) state.fg = color; else state.bg = color;
+    }
+  }
+}
+
+/** Turn ANSI SGR-colored text (e.g. an IPython-formatted traceback) into a
+ *  DOM fragment of plain text and colored `<span>`s. Text with no escape
+ *  codes at all comes back as a single unstyled text node. */
+function ansiToHtml(text){
+  const frag = document.createDocumentFragment();
+  const state = { fg: null, bg: null, bold: false, italic: false, underline: false };
+  const re = /\x1b\[([0-9;]*)m/g;
+  let lastIndex = 0, match;
+
+  function flush(chunk){
+    if (!chunk) return;
+    if (state.fg || state.bg || state.bold || state.italic || state.underline){
+      const span = document.createElement("span");
+      if (state.fg) span.style.color = state.fg;
+      if (state.bg) span.style.backgroundColor = state.bg;
+      if (state.bold) span.style.fontWeight = "bold";
+      if (state.italic) span.style.fontStyle = "italic";
+      if (state.underline) span.style.textDecoration = "underline";
+      span.textContent = chunk;
+      frag.appendChild(span);
+    } else {
+      frag.appendChild(document.createTextNode(chunk));
+    }
+  }
+
+  while ((match = re.exec(text)) !== null){
+    flush(text.slice(lastIndex, match.index));
+    lastIndex = re.lastIndex;
+    const codes = match[1].length ? match[1].split(";").map(Number) : [0];
+    applySGR(state, codes);
+  }
+  flush(text.slice(lastIndex));
+  return frag;
+}
+
 /** MIME types in the order we prefer to render them, richest first --
  *  same preference order Jupyter itself uses for a display mimebundle. */
 const MIME_PRIORITY = ["image/png", "image/jpeg", "image/svg+xml", "text/html", "text/plain"];
@@ -104,42 +196,49 @@ function renderOutput(data){
  * initial state -- no change listeners needed.
  */
 function render({ model, el }){
-  const root = document.createElement("div");
-  const success = model.get("success");
-  root.className = "sw-root " + (success ? "sw-ok" : "sw-error");
-
-  const badge = document.createElement("div");
-  badge.className = "sw-badge";
-  badge.textContent = (success ? "\u{1F512}" : "⚠️") + " isolated exercise";
-  root.appendChild(badge);
-
-  const stdout = model.get("stdout");
-  if (stdout){
-    const pre = document.createElement("pre");
-    pre.className = "sw-stdout";
-    pre.textContent = stdout;
-    root.appendChild(pre);
+  // Both classic ipywidgets and JupyterLab wrap a widget's view in one or
+  // more shrink-to-fit containers by default, so the box only ends up as
+  // wide as its own content instead of the output area (which lines up
+  // with the input cell above it). Force every ancestor in that wrapper
+  // chain to fill its parent -- inline styles win regardless of exactly
+  // what those wrapper elements are called in a given frontend.
+  let ancestor = el;
+  for (let i = 0; i < 4 && ancestor; i++){
+    ancestor.style.width = "100%";
+    ancestor.style.boxSizing = "border-box";
+    ancestor = ancestor.parentElement;
   }
 
-  const stderr = model.get("stderr");
-  if (stderr){
+  const root = document.createElement("div");
+  root.className = "sw-root";
+
+  // Everything the cell produced lives in one continuous white panel --
+  // nesting it inside the gray .sw-root "mat" this way (rather than laying
+  // stdout/stderr/outputs/traceback directly on the gray background) means
+  // there's no gray gap visible between them.
+  const body = document.createElement("div");
+  body.className = "sw-body";
+  root.appendChild(body);
+
+  const output = [model.get("stdout"), model.get("stderr")].filter(Boolean).join("\n");
+  if (output){
     const pre = document.createElement("pre");
-    pre.className = "sw-stderr";
-    pre.textContent = stderr;
-    root.appendChild(pre);
+    pre.className = "sw-output";
+    pre.appendChild(ansiToHtml(output));
+    body.appendChild(pre);
   }
 
   (model.get("outputs") || []).forEach((data) => {
     const node = renderOutput(data);
-    if (node) root.appendChild(node);
+    if (node) body.appendChild(node);
   });
 
   const tb = model.get("traceback");
   if (tb){
     const pre = document.createElement("pre");
     pre.className = "sw-traceback";
-    pre.textContent = tb;
-    root.appendChild(pre);
+    pre.appendChild(ansiToHtml(tb));
+    body.appendChild(pre);
   }
 
   el.appendChild(root);
@@ -149,26 +248,25 @@ export default { render };
 """
 
 _CSS = r"""
-/* Styles for the DOM built in _ESM's render(): a shaded, left-accented box
-   (.sw-root) so %%exercise output reads as visually distinct from a normal
-   cell's plain output -- .sw-badge, then any of .sw-stdout/.sw-stderr/
-   rendered outputs (.sw-image/.sw-svg/.sw-html/.sw-text)/.sw-traceback. */
-.sw-root { display: flex; flex-direction: column; gap: 8px;
+/* Styles for the DOM built in _ESM's render(): a plain gray "mat" (.sw-root,
+   no left accent, no success/failure color change) around one continuous
+   white panel (.sw-body) holding everything the cell produced -- combined
+   stdout+stderr (.sw-output), any rendered outputs (.sw-image/.sw-svg/
+   .sw-html/.sw-text), and .sw-traceback -- stacked with plain margin so no
+   gray ever shows between them. */
+.sw-root { width: 100%; box-sizing: border-box;
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-  background: #f4f0ff; border-left: 4px solid #7c3aed; border-radius: 6px;
-  padding: 10px 14px; }
-.sw-root.sw-error { background: #fef2f2; border-left-color: #b91c1c; }
-.sw-badge { font-size: 12px; font-weight: 600; letter-spacing: .02em; color: #5b21b6; }
-.sw-root.sw-error .sw-badge { color: #b91c1c; }
-.sw-stdout, .sw-stderr, .sw-text, .sw-traceback {
-  margin: 0; padding: 8px 10px; border-radius: 4px;
+  background: #f3f4f6; border-radius: 6px; padding: 8px;
+  border-left: 1px solid #9ca3af; border-right: 1px solid #9ca3af;
+  border-bottom: 1px solid #9ca3af; }
+.sw-body { background: #ffffff; border-radius: 4px; padding: 10px 14px; }
+.sw-body > * + * { margin-top: 8px; }
+.sw-output, .sw-text, .sw-traceback {
+  margin: 0;
   font-family: ui-monospace, SFMono-Regular, "Cascadia Code", Menlo, monospace;
-  font-size: 12.5px; white-space: pre-wrap; word-break: break-word; }
-.sw-stdout, .sw-text { background: #ffffff; color: #24292f; }
-.sw-stderr { background: #fff5f5; color: #9a3412; }
-.sw-traceback { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
-.sw-image { max-width: 100%; border-radius: 4px; background: #fff; }
-.sw-html, .sw-svg { background: #fff; border-radius: 4px; padding: 6px; overflow-x: auto; }
+  font-size: 12.5px; white-space: pre-wrap; word-break: break-word; color: #24292f; }
+.sw-image { max-width: 100%; border-radius: 4px; }
+.sw-html, .sw-svg { border-radius: 4px; overflow-x: auto; }
 """
 
 
@@ -211,6 +309,13 @@ class ExerciseOutputWidget(anywidget.AnyWidget):
 
     def __init__(self, result):
         super().__init__()
+        # Every ipywidgets-compliant frontend (JupyterLab, classic Notebook,
+        # VS Code, Colab, ...) honors `layout.width` natively on the view
+        # element -- more portable than anything _ESM's render() can do by
+        # poking at ancestor DOM nodes, since some frontends (e.g. VS Code's
+        # notebook renderer) sandbox the widget in a way our own JS can't
+        # reach out of.
+        self.layout.width = "100%"
         self.stdout = result.stdout
         self.stderr = result.stderr
         self.outputs = result.outputs

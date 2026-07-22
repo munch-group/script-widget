@@ -21,6 +21,7 @@ from __future__ import annotations
 import ast
 import contextlib
 import io
+import sys
 import traceback
 
 __all__ = ["ExerciseResult", "run_exercise"]
@@ -45,7 +46,10 @@ class ExerciseResult:
         A short ``"ExceptionType: message"`` summary if the cell failed to
         parse or raised while running, else ``None``.
     traceback : str or None
-        The full formatted traceback for ``error``, else ``None``.
+        The full formatted traceback for ``error``, else ``None``. Captured
+        via ``ip.InteractiveTB`` when a live shell is available, so it
+        carries the same ANSI color codes as a normal uncaught-exception
+        traceback; plain ``traceback.format_exc()`` text otherwise.
     """
 
     __slots__ = ("stdout", "stderr", "outputs", "error", "traceback")
@@ -153,7 +157,8 @@ def _run_with_ipython(tree, namespace, ip):
                 ipy_display(value)
         except Exception as e:
             error = f"{type(e).__name__}: {e}"
-            tb = traceback.format_exc()
+            stb = ip.InteractiveTB.structured_traceback(*sys.exc_info())
+            tb = ip.InteractiveTB.stb2text(stb)
         finally:
             # Flush any matplotlib figures the cell drew, exactly like a
             # normal cell would -- runs even if the cell raised, so a

@@ -55,7 +55,11 @@ The package is `script_widget` under `src/`:
   and the trailing value (if any) is reported as a `text/plain` output.
   Returns an `ExerciseResult(stdout, stderr, outputs, error, traceback)` --
   never raises; a `SyntaxError` or any runtime exception is caught and
-  reported via `.error`/`.traceback`.
+  reported via `.error`/`.traceback`. With a live `ip`, `.traceback` comes
+  from `ip.InteractiveTB.structured_traceback()`/`.stb2text()` (the same
+  machinery IPython itself uses to print an uncaught exception), so it
+  carries the same ANSI color codes a normal notebook traceback would --
+  see "Colored tracebacks" under Architecture.
 - `src/script_widget/widget.py` -- `ExerciseOutputWidget` (the
   `anywidget.AnyWidget`) + the embedded `_ESM`/`_CSS` frontend strings +
   `register_exercise_magic()`. The widget's traits are copied from an
@@ -64,7 +68,10 @@ The package is `script_widget` under `src/`:
   frontend's `render()` draws once from the model's initial state with no
   change listeners. The embedded CSS's class prefix (`sw-*`) tracks the
   package name (`script_widget`), not the magic name -- it's an internal
-  styling namespace, not user-facing.
+  styling namespace, not user-facing. The box itself is always a plain gray
+  (no color/header change on success vs. failure); stdout and stderr are
+  merged into one white `.sw-output` block rather than two separately
+  colored ones.
 - `src/script_widget/__init__.py` -- re-exports `ExerciseResult`/
   `run_exercise`/`ExerciseOutputWidget`/`register_exercise_magic` from
   `executor.py`/`widget.py`. Importing `script_widget` therefore both
@@ -124,6 +131,26 @@ registered (a no-op if inline mode isn't active, matching normal notebook
 behavior in that case too). It's called in a `finally`, so a figure drawn
 before an exception still gets flushed and shown, exactly like a real cell.
 
+### Colored tracebacks
+
+A `%%exercise` traceback is meant to look like a normal uncaught-exception
+display, not a plain `traceback.format_exc()` dump. The backend gets this
+for free by reusing IPython's own formatter rather than reimplementing it:
+`ip.InteractiveTB.structured_traceback(*sys.exc_info())` +
+`.stb2text(...)` -- exactly the call `InteractiveShell` itself makes before
+printing an exception -- which returns text with real ANSI SGR escape
+codes (IPython 9's traceback formatter is pygments-based, so source-context
+lines carry full syntax highlighting via 256-color codes, not just the 16
+basic ones used for the exception header/filename/line number). The
+frontend has no ANSI-rendering library to lean on (`_ESM` is dependency-free
+by design), so `widget.py`'s `_ESM` embeds a small SGR-code interpreter
+(`ansiToHtml`/`applySGR`/`xterm256`) that turns those escape codes into
+colored `<span>`s, using the exact hex values JupyterLab itself uses for
+`.ansi-*-fg` so the result matches a real notebook's palette. Text with no
+escape codes at all (the no-`ip` fallback path's plain
+`traceback.format_exc()`) round-trips through the same function as a single
+unstyled text node.
+
 ## Gotchas
 
 - **Mutating a shared object via an import IS visible outside the cell.**
@@ -167,7 +194,10 @@ Pixi-managed (config in `pyproject.toml` under `[tool.pixi.*]`; channels
 (dev/test only, for the figure-capture tests), `quarto`/`quartodoc`,
 `pytest`.
 
-- Dev install: `pixi run install-dev` (editable, no build isolation).
+- Dev install: `pixi run install-dev` (`pip install --no-build-isolation
+  --force-reinstall --no-deps .` -- a real, **non-editable** install, despite
+  the task name; re-run it after every `src/` edit or `import script_widget`
+  picks up the stale previously-installed copy, not your change).
 - Run tests: `pixi run test` (== `pytest test/`).
 - Run a single test: `pixi run pytest test/test_executor.py::test_exception_is_caught_and_reported`
   (or plain `pytest ...` -- `test/conftest.py` puts `src/` on `sys.path`, so
